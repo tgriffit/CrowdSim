@@ -51,11 +51,12 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLUT_BUILDING_LIB;USINGVISUALSTUDIO</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glut32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -77,9 +78,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\CrowdSim.cpp" />
+    <ClCompile Include="..\..\Environment.cpp" />
+    <ClCompile Include="..\..\FileParser.cpp" />
+    <ClCompile Include="..\..\Model.cpp" />
     <ClCompile Include="..\..\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Environment.h" />
+    <ClInclude Include="..\..\FileParser.h" />
+    <ClInclude Include="..\..\Model.h" />
     <ClInclude Include="..\..\Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,10 +3,6 @@
 
 #include "Utilities.h"
 
-using namespace std;
-
-
-
 int main(int argc, char* argv[])
 {
 	string env = "";
@@ -41,17 +37,15 @@ int main(int argc, char* argv[])
 
 	if (env.empty())
 	{
-		cout << "No environment file specified! You need to specify one with the -e flag" << endl;
-		exit(0);
+		error("No environment file specified! You need to specify one with the -e flag");
 	}
 	else if (rig.empty())
 	{
-		cout << "No rig file specified! You need to specify one with the -r flag" << endl;
-		exit(0);
+		error("No rig file specified! You need to specify one with the -r flag");
 	}
 	else
 	{
-
+		// Run the actual program
 	}
 
 	return 0;
