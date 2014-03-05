@@ -16,5 +16,5 @@
 *~
 
 # Visual Studio compiled files - we can't use file extensions because VS uses .obj instead of .o
-Code/VS\ Files/Debug
-Code/VS\ Files/Release
+Code/VS\ Files/Debug/*
+Code/VS\ Files/Release/*
