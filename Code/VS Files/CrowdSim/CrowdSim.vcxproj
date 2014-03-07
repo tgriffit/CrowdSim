@@ -81,12 +81,16 @@
     <ClCompile Include="..\..\Environment.cpp" />
     <ClCompile Include="..\..\FileParser.cpp" />
     <ClCompile Include="..\..\Model.cpp" />
+    <ClCompile Include="..\..\Rig.cpp" />
+    <ClCompile Include="..\..\Simulation.cpp" />
     <ClCompile Include="..\..\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Environment.h" />
     <ClInclude Include="..\..\FileParser.h" />
     <ClInclude Include="..\..\Model.h" />
+    <ClInclude Include="..\..\Rig.h" />
+    <ClInclude Include="..\..\Simulation.h" />
     <ClInclude Include="..\..\Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

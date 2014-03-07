@@ -6,7 +6,7 @@ void Model::readObjFile(const char* filename)
 	ifstream file(filename);
 	if (!file) 
 	{
-		error("ERROR: unable to open input file: %s", filename);
+		error("ERROR: unable to open input file: %s\n", filename);
 	}
 
 	while (getline(file, line)) 
@@ -118,7 +118,7 @@ void Model::compile()
 	{
 		if (vertices[i].size() != 3) 
 		{
-			error("ERROR: assumes 3 dimensional vertices");
+			error("ERROR: assumes 3 dimensional vertices\n");
 		}
 
 		verticesCompiled[3*i+0] = vertices[i][0];
@@ -130,7 +130,7 @@ void Model::compile()
 	{
 		if (faceVertices[i].size() != 3) 
 		{
-			error("ERROR: assumes triangular faces");
+			error("ERROR: assumes triangular faces\n");
 		}
 
 		trianglesCompiled[3*i+0] = faceVertices[i][0];

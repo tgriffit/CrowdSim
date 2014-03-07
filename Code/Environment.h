@@ -15,7 +15,7 @@ struct Environment : public Model
 	TileType** tiles;
 	int length, width;	// Dimensions of the environment (in tiles)
 
-	void loadEnvironment(char* filename);
+	void loadEnvironment(string filename);
 
 	void setupGrid();
 };

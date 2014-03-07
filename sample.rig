@@ -1,0 +1,24 @@
+MESH
+meshes/person-dev.obj
+
+# All animations should use this skeleton so that they can share rigging data.
+SKELETON
+motion/blah.bvh
+
+FORWARD1
+motion/blah1.bvh
+motion/blah4.bvh
+motion/blah5.bvh
+
+FORWARDRIGHT
+motion/blah2.bvh
+
+FORWARDLEFT
+motion/blah3.bvh
+
+# Any other animation types we decide on
+
+
+RIGDATA
+NUMBERSNUMBERSNUMBERSNUMBERSNUMBERS!
+# Massive array

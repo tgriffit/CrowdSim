@@ -13,3 +13,6 @@ string seekLine(ifstream& file, string pattern);
 
 // Checks whether the next line begins with the pattern.
 string checkNextLine(ifstream& file, string pattern);
+
+// Determines which directory the listed path is in
+string directoryFromPath(string path);

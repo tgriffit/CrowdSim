@@ -2,8 +2,9 @@
 #include <iostream>
 
 #include "Utilities.h"
+#include "Simulation.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
 	string env = "";
 	string rig = "";
@@ -37,15 +38,16 @@ int main(int argc, char* argv[])
 
 	if (env.empty())
 	{
-		error("No environment file specified! You need to specify one with the -e flag");
+		error("No environment file specified! You need to specify one with the -e flag\n");
 	}
 	else if (rig.empty())
 	{
-		error("No rig file specified! You need to specify one with the -r flag");
+		error("No rig file specified! You need to specify one with the -r flag\n");
 	}
 	else
 	{
 		// Run the actual program
+		Simulation::startSimulation(argc, argv, env, rig);
 	}
 
 	return 0;

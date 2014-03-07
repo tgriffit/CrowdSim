@@ -49,9 +49,9 @@ struct Model
 		solid = 0;
 	}
 
-
-	void glPosition(Vector3f initialPosition) 
+	
 	// place mesh in specified position+orientation in openGL
+	void glPosition(Vector3f initialPosition) 
 	{
 		glTranslatef(translation[0], translation[1], translation[2]);
 		glTranslatef(initialPosition[0], initialPosition[1], initialPosition[2]);
