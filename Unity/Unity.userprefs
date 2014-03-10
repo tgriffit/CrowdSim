@@ -2,7 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\PartitionTerrain.cs">
     <Files>
-      <File FileName="Assets\PartitionTerrain.cs" Line="37" Column="59" />
+      <File FileName="Assets\PartitionTerrain.cs" Line="84" Column="1" />
+      <File FileName="Assets\PartitionTerrain.cs" Line="24" Column="45" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
