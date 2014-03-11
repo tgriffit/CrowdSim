@@ -1,9 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\PartitionTerrain.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Code\Tile.cs">
     <Files>
-      <File FileName="Assets\PartitionTerrain.cs" Line="84" Column="1" />
-      <File FileName="Assets\PartitionTerrain.cs" Line="24" Column="45" />
+      <File FileName="Assets\Code\SetupEnvironment.cs" Line="32" Column="5" />
+      <File FileName="Assets\Code\Tile.cs" Line="52" Column="4" />
+      <File FileName="Assets\Code\Grid.cs" Line="41" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

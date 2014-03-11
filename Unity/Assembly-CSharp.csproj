@@ -45,7 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\PartitionTerrain.cs" />
+    <Compile Include="Assets\Code\Grid.cs" />
+    <Compile Include="Assets\Code\PartitionTerrain.cs" />
+    <Compile Include="Assets\Code\SetupEnvironment.cs" />
+    <Compile Include="Assets\Code\Tile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

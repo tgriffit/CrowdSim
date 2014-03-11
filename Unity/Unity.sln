@@ -43,6 +43,13 @@ Global
 		$2.CatchNewLinePlacement = NewLine
 		$2.FinallyNewLinePlacement = NewLine
 		$2.ArrayInitializerWrapping = DoNotChange
+		$2.BeforeMethodDeclarationParentheses = False
+		$2.BeforeMethodCallParentheses = False
+		$2.BeforeIndexerDeclarationBracket = False
+		$2.BeforeDelegateDeclarationParentheses = False
+		$2.AfterDelegateDeclarationParameterComma = True
+		$2.NewParentheses = False
+		$2.SpacesBeforeBrackets = False
 		$2.inheritsSet = Mono
 		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
