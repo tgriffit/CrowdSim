@@ -31,7 +31,7 @@ public class Grid
 		}
 	}
 
-	public IEnumerable<Tile> getAllTiles()
+	public List<Tile> getAllTiles()
 	{
 		List<Tile> tiles = new List<Tile>();
 
@@ -42,5 +42,9 @@ public class Grid
 
 		return tiles;
 	}
- }
 
+	public void DebugDraw()
+	{
+		getAllTiles().ForEach(t => t.DebugDraw());
+	}
+}

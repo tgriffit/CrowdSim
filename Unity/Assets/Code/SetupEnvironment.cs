@@ -29,11 +29,6 @@ public class SetupEnvironment : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		//print (Grid.Instance.getAllTiles().Count());
-
-		foreach (Tile t in Grid.Instance.getAllTiles())
-		{
-			t.DebugDraw();
-		}
+		Grid.Instance.DebugDraw();
 	}
 }
