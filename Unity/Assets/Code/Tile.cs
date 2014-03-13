@@ -5,15 +5,15 @@ using UnityEngine;
 public class Tile
 {
 	//public enum TileType { WALKABLE, UNWALKABLE }
-	public const float TILESIZE = 1.0f;	// Should change
+	public const float TILESIZE = 0.75f;	// Should change
 	private Vector3 position;
 
 	public Tile (Vector3 corner)
 	{
 		Position = new Vector3(corner.x + TILESIZE / 2, corner.y, corner.z + TILESIZE / 2);
 		Walkable = true;
-		IsEntrance = true;
-		IsExit = true;
+		//IsEntrance = true;
+		//IsExit = true;
 	}
 
 	// Basic Tile properties
