@@ -26,7 +26,6 @@ public class SetupEnvironment : MonoBehaviour
 		Vector3 center = gameObject.transform.position;
 		Vector3 size = gameObject.renderer.bounds.size;
 
-		// The y component of this will have to change. We need a way to figure out the the height of the flat component.
 		Vector3 corner = new Vector3(center.x - size.x / 2, findGroundLevel(mesh.normals), center.z - size.z / 2);
 
 		Grid.Instance.setup(corner, (int)(size.x / Tile.TILESIZE), (int)(size.z / Tile.TILESIZE), mesh.vertices, mesh.triangles);

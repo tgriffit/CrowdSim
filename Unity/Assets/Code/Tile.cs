@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Tile
 {
 	//public enum TileType { WALKABLE, UNWALKABLE }
-	public const float TILESIZE = 0.75f;	// Should change
-	private Vector3 position;
+	public const float TILESIZE = 1.0f;	// Should change
+
+	private const float TOLERANCE = 0.05f;		// I have no idea what our tolerance for y-variation should be
+	private const float CLEARANCE = 3.0f;		// The minimum clearance over the ground for a tile to be considered walkable
+
+	//private Vector3 position;
 
 	public Tile (Vector3 corner)
 	{
 		Position = new Vector3(corner.x + TILESIZE / 2, corner.y, corner.z + TILESIZE / 2);
-		Walkable = true;
-		//IsEntrance = true;
-		//IsExit = true;
+		Walkable = TestWalkability ();
 	}
 
 	// Basic Tile properties
@@ -30,6 +33,12 @@ public class Tile
 	public List<int> Claims { get; set; }
 
 
+	private bool TestWalkability()
+	{
+		// Throws a sphere at the terrain to detect obstacles
+		var hits = Physics.SphereCastAll (Position - new Vector3(0, TILESIZE, 0), TILESIZE / 2, Vector3.up);
+		return !hits.Any ();
+	}
 
 	public void DebugDraw()
 	{
