@@ -17,14 +17,7 @@ public class Grid
 			Debug.LogError("Tried to run setup on the grid multiple times!");
 			return;
 		}
-
-//		// A list of all the vertices that are part of an obstacle
-//		var problemVertices = vertices.Where(v => Mathf.Abs(v.y - corner.y) > TOLERANCE);
-//		// All triangles that contain an obstacle vertex
-//		var problemPolies = triangles.Where(t => t%3==0 && problemVertices.Contains(vertices[t]) 
-//		                                    || problemVertices.Contains(vertices[t+1]) 
-//		                                    || problemVertices.Contains(vertices[t+2]));
-
+		
 		grid = new Tile[x][];
 		for (int i = 0; i < x; ++i)
 		{
@@ -32,11 +25,12 @@ public class Grid
 
 			for (int j = 0; j < grid[i].Length; ++j)
 			{
-				grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TILESIZE, corner.y, corner.z + j * Tile.TILESIZE));
+				grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TILESIZE, corner.y, corner.z + j * Tile.TILESIZE), i, j);
 			}
 		}
 
-		// Walk through the grid and set up the tile properties
+		// Locate all of the ways in and out of the environment
+		FindEntrancesAndExits();
 	}
 
 	public List<Tile> getAllTiles()
@@ -50,6 +44,35 @@ public class Grid
 
 		return tiles;
 	}
+
+	private void FindEntrancesAndExits()
+	{
+		var entrances = UnityEngine.Object.FindObjectsOfType<Entrance>();
+		var exits = UnityEngine.Object.FindObjectsOfType<Exit>();
+		var tiles = getAllTiles();
+		
+		entrances.ToList().ForEach(e => getNearTiles(e, tiles).ToList().ForEach(t => t.IsEntrance = true));
+		exits.ToList().ForEach(e => getNearTiles(e, tiles).ToList().ForEach(t => t.IsExit = true));
+	}
+
+	private List<Tile> getNearTiles(AccessPoint p, IEnumerable<Tile> tiles)
+	{
+		var shortestDist = tiles.Min(t => Vector3.Distance(p.Position, t.Position));
+		var tile = tiles.First(t => Vector3.Distance(p.Position, t.Position) == shortestDist);
+
+		// Once we have the nearest tile, we need to find that tile's neighbours
+		var center = tile.GridPosition;
+
+		int minx = (int)Math.Max(center.x - p.xsize, 0);
+		int maxx = (int)Math.Min(center.x + p.xsize, grid.Length - 1);
+
+		int minz = (int)Math.Max(center.y - p.zsize, 0);
+		int maxz = (int)Math.Min(center.y + p.zsize, grid[grid.Length - 1].Length);
+
+		// Returns all the tiles within the appropriate range of the center tile
+		return tiles.Where(t => t.GridPosition.x >= minx && t.GridPosition.x <= maxx && t.GridPosition.y >= minz && t.GridPosition.y <= maxz).ToList();
+	}
+
 
 	public void DebugDraw()
 	{

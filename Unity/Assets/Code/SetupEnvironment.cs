@@ -30,14 +30,14 @@ public class SetupEnvironment : MonoBehaviour
 
 		Grid.Instance.setup(corner, (int)(size.x / Tile.TILESIZE), (int)(size.z / Tile.TILESIZE), mesh.vertices, mesh.triangles);
 
-
-
+		Simulation.Start();
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
 		Grid.Instance.DebugDraw();
+		Simulation.Update();
 	}
 
 	private float findGroundLevel(Vector3[] normals)
