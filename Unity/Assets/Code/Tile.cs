@@ -73,16 +73,16 @@ public class Tile
 
 		if (IsEntrance)
 		{
-			Debug.DrawLine(upperMid, lowerMid, Color.cyan);
-			Debug.DrawLine(leftMid, rightMid, Color.cyan);
+			Debug.DrawLine(upperMid, lowerMid, Color.blue);
+			Debug.DrawLine(leftMid, rightMid, Color.blue);
 		}
 
 		if (IsExit)
 		{
-			Debug.DrawLine(upperMid, rightMid, Color.magenta);
-			Debug.DrawLine(rightMid, lowerMid, Color.magenta);
-			Debug.DrawLine(lowerMid, leftMid, Color.magenta);
-			Debug.DrawLine(leftMid, upperMid, Color.magenta);
+			Debug.DrawLine(upperMid, rightMid, Color.blue);
+			Debug.DrawLine(rightMid, lowerMid, Color.blue);
+			Debug.DrawLine(lowerMid, leftMid, Color.blue);
+			Debug.DrawLine(leftMid, upperMid, Color.blue);
 		}
 	}
 }

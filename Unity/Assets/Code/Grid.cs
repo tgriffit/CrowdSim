@@ -55,7 +55,7 @@ public class Grid
 		exits.ToList().ForEach(e => getNearTiles(e, tiles).ToList().ForEach(t => t.IsExit = true));
 	}
 
-	private List<Tile> getNearTiles(AccessPoint p, IEnumerable<Tile> tiles)
+	private List<Tile> getNearTiles(InteractionPoint p, IEnumerable<Tile> tiles)
 	{
 		var shortestDist = tiles.Min(t => Vector3.Distance(p.Position, t.Position));
 		var tile = tiles.First(t => Vector3.Distance(p.Position, t.Position) == shortestDist);

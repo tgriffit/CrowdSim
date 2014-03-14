@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Exit : AccessPoint
+public class Exit : InteractionPoint
 {
 	protected override string GetDisplayText() 
 	{

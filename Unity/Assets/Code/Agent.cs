@@ -1,21 +1,17 @@
-﻿using UnityEngine;
-using System.Collections;
+using System;
+using UnityEngine;
 
-public class Agent : MonoBehaviour
+public class Agent
 {
-	private const float idealSpeed = 1.33f;
+	private Transform model;
 
-	public Transform[] models;
-
-	// Use this for initialization
-	void Start()
+	public Agent (Transform model)
 	{
-	
 	}
-	
-	// Update is called once per frame
-	void Update()
+
+	public void spawn(Vector3 position, Vector3 direction)
 	{
-	
+
 	}
 }
+
