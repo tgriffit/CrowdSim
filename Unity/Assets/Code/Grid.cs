@@ -33,29 +33,32 @@ public class Grid
 		FindEntrancesAndExits();
 	}
 
-	public List<Tile> getAllTiles()
+	public List<Tile> GetAllTiles()
 	{
-		List<Tile> tiles = new List<Tile>();
+		return grid.SelectMany(t => t).ToList();
+	}
 
-		foreach (Tile[] ts in grid)
-		{
-			tiles.AddRange(ts);
-		}
+	public List<Tile> GetEntranceTiles()
+	{
+		return GetAllTiles().Where(t => t.IsEntrance).ToList();
+	}
 
-		return tiles;
+	public List<Tile> GetExitTiles()
+	{
+		return GetAllTiles().Where(t => t.IsExit).ToList();
 	}
 
 	private void FindEntrancesAndExits()
 	{
 		var entrances = UnityEngine.Object.FindObjectsOfType<Entrance>();
 		var exits = UnityEngine.Object.FindObjectsOfType<Exit>();
-		var tiles = getAllTiles();
+		var tiles = GetAllTiles();
 		
-		entrances.ToList().ForEach(e => getNearTiles(e, tiles).ToList().ForEach(t => t.IsEntrance = true));
-		exits.ToList().ForEach(e => getNearTiles(e, tiles).ToList().ForEach(t => t.IsExit = true));
+		entrances.ToList().ForEach(e => GetNearTiles(e, tiles).ToList().ForEach(t => t.IsEntrance = true));
+		exits.ToList().ForEach(e => GetNearTiles(e, tiles).ToList().ForEach(t => t.IsExit = true));
 	}
 
-	private List<Tile> getNearTiles(InteractionPoint p, IEnumerable<Tile> tiles)
+	private List<Tile> GetNearTiles(InteractionPoint p, IEnumerable<Tile> tiles)
 	{
 		var shortestDist = tiles.Min(t => Vector3.Distance(p.Position, t.Position));
 		var tile = tiles.First(t => Vector3.Distance(p.Position, t.Position) == shortestDist);
@@ -76,6 +79,6 @@ public class Grid
 
 	public void DebugDraw()
 	{
-		getAllTiles().ForEach(t => t.DebugDraw());
+		GetAllTiles().ForEach(t => t.DebugDraw());
 	}
 }

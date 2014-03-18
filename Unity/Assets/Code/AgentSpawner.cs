@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /*
  *	This script controls which agents are spawned.
@@ -8,14 +9,23 @@ using System.Collections;
  */
 public class AgentSpawner : MonoBehaviour
 {
-	public static Transform[] models;
+	public Transform[] models;
+	public static AgentSpawner Instance;
 
 	// Use this for initialization
 	void Start()
 	{
-		if (models.Length == 0) 
+		if (models == null || models.Length == 0) 
 		{
 			Debug.LogError("No spawnable models found by AgentSpawner!");
+		}
+
+		if (Instance == null) {
+			Instance = this;
+		}
+		else 
+		{
+			Debug.LogError("Multiple AgentSpawners found in level!");
 		}
 	}
 	
@@ -27,6 +37,6 @@ public class AgentSpawner : MonoBehaviour
 	public static Agent GetAgent()
 	{
 		// Returns an agent with a random appearance from the list
-		return new Agent(models[Random.Range(0, models.Length - 1)]);
+		return new Agent(Instance.models[Random.Range(0, Instance.models.Length)]);
 	}
 }
