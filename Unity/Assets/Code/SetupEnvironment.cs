@@ -26,21 +26,23 @@ public class SetupEnvironment : MonoBehaviour
 		Vector3 center = gameObject.transform.position;
 		Vector3 size = gameObject.renderer.bounds.size;
 
-		Vector3 corner = new Vector3(center.x - size.x / 2, findGroundLevel(mesh.normals), center.z - size.z / 2);
+		float height = FindGroundLevel(mesh.normals);
+
+		Vector3 corner = new Vector3(center.x - size.x / 2, height, center.z - size.z / 2);
 
 		Grid.Instance.setup(corner, (int)(size.x / Tile.TILESIZE), (int)(size.z / Tile.TILESIZE), mesh.vertices, mesh.triangles);
 
-		Simulation.Start();
+		Simulation.Instance.Start();
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
 		Grid.Instance.DebugDraw();
-		Simulation.Update();
+		Simulation.Instance.Update();
 	}
 
-	private float findGroundLevel(Vector3[] normals)
+	private float FindGroundLevel(Vector3[] normals)
 	{
 		// Dark secret - we just assume that the ground is at height 0. 
 		// If this becomes a problem then we may be able to come up with a solution, but it's problematic.
