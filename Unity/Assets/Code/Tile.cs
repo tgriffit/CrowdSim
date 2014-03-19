@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Tile
+public class Tile : IPathNode<Tile>
 {
-	//public enum TileType { WALKABLE, UNWALKABLE }
-	public const float TILESIZE = 0.75f;	// Should change
+	public const float TILESIZE = 0.75f;		// Should change to match the width of our model
 
 	private const float TOLERANCE = 0.05f;		// I have no idea what our tolerance for y-variation should be
 	private const float CLEARANCE = 3.0f;		// The minimum clearance over the ground for a tile to be considered walkable
 
-	//private Vector3 position;
-
 	public Tile (Vector3 corner, int x, int z)
 	{
 		Position = new Vector3(corner.x + TILESIZE / 2, corner.y, corner.z + TILESIZE / 2);
-		GridPosition = new Vector2(x, z);
+		X = x;
+		Z = z;
 		Walkable = TestWalkability();
 	}
 
@@ -27,15 +25,25 @@ public class Tile
 
 	public bool IsExit { get; set; }
 
+	// IPathNode members
+	public bool Invalid { get { return !Walkable; } }
+	public List<Tile> Connections { get; set; }
+	public float GetDistanceHeuristic(Tile other)
+	{
+		return Math.Abs(other.X - X) + Math.Abs(other.Z - Z);
+	}
+
 	// The center of the tile
 	public Vector3 Position { get; private set; }
 
 	// The tile's position in the grid
-	public Vector2 GridPosition { get; private set; }
+	public int X { get; private set; }
+	public int Z { get; private set; }	// We'll continue using Z instead of Y to remain consistent.
 
 	// Agents can "claim" the tile a certain number of updates in advance.
 	// We keep track of when each one will be in the tile so that others can
 	// move through it up until that point.
+	// TODO: Use this.
 	public List<int> Claims { get; set; }
 
 	private bool TestWalkability()
@@ -48,16 +56,16 @@ public class Tile
 
 	public void DebugDraw()
 	{
-		var upperLeft = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
+		var upperLeft  = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
 		var upperRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
-		var lowerLeft = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
+		var lowerLeft  = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
 		var lowerRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
 
 		// These points are the midpoints between the center and the edges - if they
 		// are on the edge lines it becomes too chaotic.
 		var upperMid = new Vector3(Position.x, Position.y, Position.z + TILESIZE / 4);
 		var lowerMid = new Vector3(Position.x, Position.y, Position.z - TILESIZE / 4);
-		var leftMid = new Vector3(Position.x - TILESIZE / 4, Position.y, Position.z);
+		var leftMid  = new Vector3(Position.x - TILESIZE / 4, Position.y, Position.z);
 		var rightMid = new Vector3(Position.x + TILESIZE / 4, Position.y, Position.z);
 
 		Debug.DrawLine(upperLeft, upperRight, Color.blue);

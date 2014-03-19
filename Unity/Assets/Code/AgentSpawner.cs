@@ -10,7 +10,7 @@ using System.Collections.Generic;
 public class AgentSpawner : MonoBehaviour
 {
 	public Transform[] models;
-	public static AgentSpawner Instance;
+	public static AgentSpawner Instance = null;
 
 	// Use this for initialization
 	void Start()
@@ -20,7 +20,8 @@ public class AgentSpawner : MonoBehaviour
 			Debug.LogError("No spawnable models found by AgentSpawner!");
 		}
 
-		if (Instance == null) {
+		if (Instance == null) 
+		{
 			Instance = this;
 		}
 		else 

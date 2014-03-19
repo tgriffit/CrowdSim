@@ -19,7 +19,7 @@ public class SetupEnvironment : MonoBehaviour
 		if (meshFilter == null)
 		{
 			Debug.LogError("There's no Mesh Filter attached to this component! " +
-			               "This script should be added to the portion of the model that controls the mesh.");
+			               "This script should be added to the portion of the GameObject that controls the mesh.");
 		}
 		var mesh = meshFilter.mesh;
 
@@ -30,15 +30,15 @@ public class SetupEnvironment : MonoBehaviour
 
 		Vector3 corner = new Vector3(center.x - size.x / 2, height, center.z - size.z / 2);
 
-		Grid.Instance.setup(corner, (int)(size.x / Tile.TILESIZE), (int)(size.z / Tile.TILESIZE), mesh.vertices, mesh.triangles);
+		Grid g = new Grid(corner, (int)(size.x / Tile.TILESIZE), (int)(size.z / Tile.TILESIZE), mesh.vertices, mesh.triangles);
 
 		Simulation.Instance.Start();
+		Simulation.Instance.SetGrid(g);
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
-		Grid.Instance.DebugDraw();
 		Simulation.Instance.Update();
 	}
 
@@ -46,7 +46,6 @@ public class SetupEnvironment : MonoBehaviour
 	{
 		// Dark secret - we just assume that the ground is at height 0. 
 		// If this becomes a problem then we may be able to come up with a solution, but it's problematic.
-
 		return 0.0f;
 	}
 }

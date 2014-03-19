@@ -6,18 +6,17 @@ using UnityEngine;
 public class Grid
 {
 	// Singleton instance of the grid
-	public static Grid Instance = new Grid();
+	//public static Grid Instance = new Grid();
 	private Tile[][] grid;
 
-	private bool setupDone = false;
-	public void setup(Vector3 corner, int x, int z, Vector3[] vertices, int[] triangles)
-	{
-		if (setupDone)
-		{
-			Debug.LogError("Tried to run setup on the grid multiple times!");
-			return;
-		}
-		
+	private int maxX;
+	private int maxZ;
+
+	public Grid(Vector3 corner, int x, int z, Vector3[] vertices, int[] triangles)
+	{	
+		maxX = x;
+		maxZ = z;
+
 		grid = new Tile[x][];
 		for (int i = 0; i < x; ++i)
 		{
@@ -28,6 +27,10 @@ public class Grid
 				grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TILESIZE, corner.y, corner.z + j * Tile.TILESIZE), i, j);
 			}
 		}
+
+		// Once we're done creating the tiles, we can figure out what's adjacent to what
+		GetAllTiles().ForEach(t => t.Connections = GetAdjacentTiles(t).ToList());
+		GetAllTiles().ForEach(t => Debug.Log(GetAdjacentTiles(t).Count()));
 
 		// Locate all of the ways in and out of the environment
 		FindEntrancesAndExits();
@@ -48,6 +51,20 @@ public class Grid
 		return GetAllTiles().Where(t => t.IsExit).ToList();
 	}
 
+	public IEnumerable<Tile> GetAdjacentTiles(Tile t)
+	{
+		for (int i = Math.Max(t.X - 1, 0); i < Math.Min(t.X + 2, maxX); ++i)
+		{
+			for (int j = Math.Max(t.Z - 1, 0); j < Math.Min(t.Z + 2, maxZ); ++j)
+			{
+				if (!(i == t.X && j == t.Z))
+				{
+					yield return grid[i][j];
+				}
+			}
+		}
+	}
+
 	private void FindEntrancesAndExits()
 	{
 		var entrances = UnityEngine.Object.FindObjectsOfType<Entrance>();
@@ -64,16 +81,14 @@ public class Grid
 		var tile = tiles.First(t => Vector3.Distance(p.Position, t.Position) == shortestDist);
 
 		// Once we have the nearest tile, we need to find that tile's neighbours
-		var center = tile.GridPosition;
+		int minx = (int)Math.Max(tile.X - p.xsize, 0);
+		int maxx = (int)Math.Min(tile.X + p.xsize, grid.Length - 1);
 
-		int minx = (int)Math.Max(center.x - p.xsize, 0);
-		int maxx = (int)Math.Min(center.x + p.xsize, grid.Length - 1);
-
-		int minz = (int)Math.Max(center.y - p.zsize, 0);
-		int maxz = (int)Math.Min(center.y + p.zsize, grid[grid.Length - 1].Length);
+		int minz = (int)Math.Max(tile.Z - p.zsize, 0);
+		int maxz = (int)Math.Min(tile.Z + p.zsize, grid[grid.Length - 1].Length);
 
 		// Returns all the tiles within the appropriate range of the center tile
-		return tiles.Where(t => t.GridPosition.x >= minx && t.GridPosition.x <= maxx && t.GridPosition.y >= minz && t.GridPosition.y <= maxz).ToList();
+		return tiles.Where(t => t.X >= minx && t.X <= maxx && t.Z >= minz && t.Z <= maxz).ToList();
 	}
 
 
