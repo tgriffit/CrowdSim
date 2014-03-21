@@ -13,7 +13,7 @@ public static class AStarHelper
 	// Validator for path nodes
 	// Needed to cope with nodes that might be GameObjects and therefore
 	// not 'acutally' null when compared in generic methods
-	public static bool Invalid<T>(T inNode) where T: IPathNode<T>
+	public static bool Invalid<T>(T inNode) where T : IPathNode<T>
 	{
 		if(inNode == null || inNode.Invalid)
 			return true;
@@ -82,7 +82,6 @@ public static class AStarHelper
 			openset.Remove(x);
 			closedset.Add(x);
 
-			Debug.Log(x.Connections.Count);
 			foreach(T y in x.Connections)
 			{
 				if(AStarHelper.Invalid(y) || closedset.Contains(y))
@@ -107,20 +106,21 @@ public static class AStarHelper
 				}
 			}
 		}
-		Debug.Log("Oops.");
+
+		Debug.LogError("Failed to find path!");
 		return null;
 		
 	}
 	
 	// Once the goal has been found we now reconstruct the steps taken to get to the path
-	static void ReconstructPath<T>(Dictionary<T, T> came_from, T current_node, ref List<T> result) where T: IPathNode<T>
+	static void ReconstructPath<T>(Dictionary<T, T> cameFrom, T currentNode, ref List<T> result) where T: IPathNode<T>
 	{
-		if(came_from.ContainsKey(current_node))
+		if(cameFrom.ContainsKey(currentNode))
 		{
-			ReconstructPath(came_from, came_from[current_node], ref result);
-			result.Add(current_node);
+			ReconstructPath(cameFrom, cameFrom[currentNode], ref result);
+			result.Add(currentNode);
 			return;
 		}
-		result.Add(current_node);
+		result.Add(currentNode);
 	}
 }

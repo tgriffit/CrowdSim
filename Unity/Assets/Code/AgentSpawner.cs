@@ -9,7 +9,7 @@ using System.Collections.Generic;
  */
 public class AgentSpawner : MonoBehaviour
 {
-	public Transform[] models;
+	public GameObject[] models;
 	public static AgentSpawner Instance = null;
 
 	// Use this for initialization

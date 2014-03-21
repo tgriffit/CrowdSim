@@ -30,7 +30,6 @@ public class Grid
 
 		// Once we're done creating the tiles, we can figure out what's adjacent to what
 		GetAllTiles().ForEach(t => t.Connections = GetAdjacentTiles(t).ToList());
-		GetAllTiles().ForEach(t => Debug.Log(GetAdjacentTiles(t).Count()));
 
 		// Locate all of the ways in and out of the environment
 		FindEntrancesAndExits();

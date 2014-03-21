@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Linq;
 
@@ -39,7 +40,13 @@ public class SetupEnvironment : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		InteractionHandler.Update();
 		Simulation.Instance.Update();
+	}
+
+	void OnGUI()
+	{
+		InteractionHandler.OnGUI();
 	}
 
 	private float FindGroundLevel(Vector3[] normals)

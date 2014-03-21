@@ -30,6 +30,9 @@ public class Tile : IPathNode<Tile>
 	public List<Tile> Connections { get; set; }
 	public float GetDistanceHeuristic(Tile other)
 	{
+		// Finds the number of orthogonal tile movements that would
+		// be required to pass between the two tiles without taking
+		// obstacles into account.
 		return Math.Abs(other.X - X) + Math.Abs(other.Z - Z);
 	}
 
@@ -45,6 +48,19 @@ public class Tile : IPathNode<Tile>
 	// move through it up until that point.
 	// TODO: Use this.
 	public List<int> Claims { get; set; }
+
+	// The action to take when an agent reaches it's goal.
+	// TODO: Add more action types to make the simulation more realistic. This may have to wait until
+	// after the project is over.
+	public Action<Agent> GetTileAction()
+	{
+		if (IsExit)
+		{
+			return new Action<Agent>(a => a.Unspawn());
+		}
+
+		return null;
+	}
 
 	private bool TestWalkability()
 	{
