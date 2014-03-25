@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class Tile : IPathNode<Tile>
 {
-	public const float TILESIZE = 3f;		// Should change to match the width of our model
+	public const float TILESIZE = 3.0f;		// Should change to match the width of our model
 
 	private const float TOLERANCE = 0.05f;		// I have no idea what our tolerance for y-variation should be
 	private const float CLEARANCE = 3.0f;		// The minimum clearance over the ground for a tile to be considered IsWalkable
@@ -43,7 +43,6 @@ public class Tile : IPathNode<Tile>
 
 	public float GetDistance(Tile other, int framenum, float speed)
 	{
-		//Debug.Log ("Speed: " + speed);
 		float dist = Vector3.Distance(Position, other.Position);
 		int framesOfMovement = (int)(dist / speed);
 
@@ -58,10 +57,8 @@ public class Tile : IPathNode<Tile>
 		int framesOfMovement = (int)(dist / speed);
 		int delay = FindDelay(time, framesOfMovement);
 
-		// TODO: Add delays. Will need the time we're trying to path at.
 		if (delay > 0)
 		{
-			Debug.Log ("Delay!");
 			list.Add(new PathfindingDelay() { Origin = this, Delay = delay });
 		}
 
@@ -140,10 +137,9 @@ public class Tile : IPathNode<Tile>
 		foreach (TileClaim claim in claims)
 		{
 			// Check to see whether our journey will interfere with an existing claim
-			if ((claim.StartTime >= time + delay && claim.EndTime <= time + delay)
-			    || (claim.StartTime >= time + duration + delay && claim.EndTime <= time + delay + delay))
+			if ((claim.StartTime <= time + delay && claim.EndTime >= time + delay)
+			    || (claim.StartTime <= time + duration + delay && claim.EndTime >= time + delay + delay))
 			{
-				Debug.Log ("Loop");
 				delay += claim.EndTime - time;
 			}
 		}
@@ -153,41 +149,56 @@ public class Tile : IPathNode<Tile>
 
 	public void DebugDraw()
 	{
-		var upperLeft  = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
-		var upperRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
-		var lowerLeft  = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
-		var lowerRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
-
-		// These points are the midpoints between the center and the edges - if they
-		// are on the edge lines it becomes too chaotic.
-		var upperMid = new Vector3(Position.x, Position.y, Position.z + TILESIZE / 4);
-		var lowerMid = new Vector3(Position.x, Position.y, Position.z - TILESIZE / 4);
-		var leftMid  = new Vector3(Position.x - TILESIZE / 4, Position.y, Position.z);
-		var rightMid = new Vector3(Position.x + TILESIZE / 4, Position.y, Position.z);
-
-		Debug.DrawLine(upperLeft, upperRight, Color.blue);
-		Debug.DrawLine(upperRight, lowerRight, Color.blue);
-		Debug.DrawLine(lowerRight, lowerLeft, Color.blue);
-		Debug.DrawLine(lowerLeft, upperLeft, Color.blue);
-
-		if (!IsWalkable)
+		if (Simulation.Debug)
 		{
-			Debug.DrawLine(upperLeft, lowerRight, Color.red);
-			Debug.DrawLine(upperRight, lowerLeft, Color.red);
-		}
+			var upperLeft = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
+			var upperRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
+			var lowerLeft = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
+			var lowerRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
 
-		if (IsEntrance)
-		{
-			Debug.DrawLine(upperMid, lowerMid, Color.blue);
-			Debug.DrawLine(leftMid, rightMid, Color.blue);
-		}
+			// These points are the midpoints between the center and the edges - if they
+			// are on the edge lines it becomes too chaotic.
+			var upperMid = new Vector3(Position.x, Position.y, Position.z + TILESIZE / 4);
+			var lowerMid = new Vector3(Position.x, Position.y, Position.z - TILESIZE / 4);
+			var leftMid = new Vector3(Position.x - TILESIZE / 4, Position.y, Position.z);
+			var rightMid = new Vector3(Position.x + TILESIZE / 4, Position.y, Position.z);
 
-		if (IsExit)
-		{
-			Debug.DrawLine(upperMid, rightMid, Color.blue);
-			Debug.DrawLine(rightMid, lowerMid, Color.blue);
-			Debug.DrawLine(lowerMid, leftMid, Color.blue);
-			Debug.DrawLine(leftMid, upperMid, Color.blue);
+			Debug.DrawLine(upperLeft, upperRight, Color.blue);
+			Debug.DrawLine(upperRight, lowerRight, Color.blue);
+			Debug.DrawLine(lowerRight, lowerLeft, Color.blue);
+			Debug.DrawLine(lowerLeft, upperLeft, Color.blue);
+
+			if (!IsWalkable)
+			{
+				Debug.DrawLine(upperLeft, lowerRight, Color.red);
+				Debug.DrawLine(upperRight, lowerLeft, Color.red);
+			}
+
+			if (IsEntrance)
+			{
+				Debug.DrawLine(upperMid, lowerMid, Color.blue);
+				Debug.DrawLine(leftMid, rightMid, Color.blue);
+			}
+
+			if (IsExit)
+			{
+				Debug.DrawLine(upperMid, rightMid, Color.blue);
+				Debug.DrawLine(rightMid, lowerMid, Color.blue);
+				Debug.DrawLine(lowerMid, leftMid, Color.blue);
+				Debug.DrawLine(leftMid, upperMid, Color.blue);
+			}
+
+			if (CurrentlyClaimed())
+			{
+				Debug.DrawLine(upperLeft, upperMid, Color.red);
+				Debug.DrawLine(upperRight, upperMid, Color.red);
+				Debug.DrawLine(lowerLeft, lowerMid, Color.red);
+				Debug.DrawLine(lowerRight, lowerMid, Color.red);
+				Debug.DrawLine(upperLeft, leftMid, Color.red);
+				Debug.DrawLine(lowerLeft, leftMid, Color.red);
+				Debug.DrawLine(upperRight, rightMid, Color.red);
+				Debug.DrawLine(lowerRight, rightMid, Color.red);
+			}
 		}
 	}
 }

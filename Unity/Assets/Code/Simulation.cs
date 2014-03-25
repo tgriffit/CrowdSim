@@ -7,6 +7,8 @@ public class Simulation
 {
 	public static Simulation Instance = new Simulation();
 
+	public const bool Debug = true;
+
 	public const int FPS = 30;								// Our desired frames per second
 
 	private Grid grid;
@@ -30,7 +32,7 @@ public class Simulation
 	{
 		Application.targetFrameRate = FPS;
 		agents = new List<Agent>();
-		maxpopulation = 5;
+		maxpopulation = 2;
 		Playing = true;
 	}
 

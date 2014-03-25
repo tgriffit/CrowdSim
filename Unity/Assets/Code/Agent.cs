@@ -135,7 +135,7 @@ public class Agent
 				
 				// Half of the trip will be in each tile
 				move.Origin.AddClaim(time, numframes / 2);
-				move.Destination.AddClaim(time, numframes / 2);
+				move.Destination.AddClaim(time + numframes / 2, numframes / 2);
 
 				time += numframes;
 			}
@@ -144,31 +144,32 @@ public class Agent
 
 	private void DrawPath()
 	{
-		if (!path.Any()) 
+		if (Simulation.Debug)
 		{
-			return;
-		}
-
-		//Debug.DrawLine(agent.transform.position, path.ElementAt(0).Origin.Position, debugColor);
-
-		foreach (IPathAction<Tile> action in path) 
-		{
-			PathfindingMovement move = action as PathfindingMovement;
-			PathfindingDelay delay = action as PathfindingDelay;
-
-			if (move != null)
+			if (!path.Any())
 			{
-				Debug.DrawLine(move.Origin.Position, move.Destination.Position, debugColor);
+				return;
 			}
-			else
-			{
-				Vector3 topLeft 	= delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
-				Vector3 topRight 	= delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
-				Vector3 bottomLeft 	= delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
-				Vector3 bottomRight = delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
 
-				Debug.DrawLine(topLeft, bottomRight, debugColor);
-				Debug.DrawLine(topRight, bottomLeft, debugColor);
+			foreach (IPathAction<Tile> action in path)
+			{
+				PathfindingMovement move = action as PathfindingMovement;
+				PathfindingDelay delay = action as PathfindingDelay;
+
+				if (move != null)
+				{
+					Debug.DrawLine(move.Origin.Position, move.Destination.Position, debugColor);
+				} 
+				else
+				{
+					Vector3 topLeft = delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
+					Vector3 topRight = delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
+					Vector3 bottomLeft = delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
+					Vector3 bottomRight = delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
+
+					Debug.DrawLine(topLeft, bottomRight, debugColor);
+					Debug.DrawLine(topRight, bottomLeft, debugColor);
+				}
 			}
 		}
 	}

@@ -10,22 +10,22 @@ public class InteractionHandler
 
 	public static void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.KeypadPlus)) 
+		if (Input.GetKeyDown(KeyCode.KeypadPlus) || Input.GetKeyDown(KeyCode.Equals)) 
 		{
 			Simulation.Instance.MaxPopulation += 1;
 		}
 		
-		if (Input.GetKeyDown(KeyCode.KeypadMultiply))
+		if (Input.GetKeyDown(KeyCode.KeypadMultiply) || Input.GetKeyDown(KeyCode.Alpha8))
 		{
 			Simulation.Instance.MaxPopulation += 10;
 		}
 		
-		if (Input.GetKeyDown(KeyCode.KeypadMinus))
+		if (Input.GetKeyDown(KeyCode.KeypadMinus) || Input.GetKeyDown(KeyCode.Minus))
 		{
 			Simulation.Instance.MaxPopulation -= 1;
 		}
 		
-		if (Input.GetKeyDown(KeyCode.KeypadDivide))
+		if (Input.GetKeyDown(KeyCode.KeypadDivide) || Input.GetKeyDown(KeyCode.Slash))
 		{
 			Simulation.Instance.MaxPopulation -= 10;
 		}
