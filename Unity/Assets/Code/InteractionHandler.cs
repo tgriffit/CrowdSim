@@ -3,38 +3,92 @@ using UnityEngine;
 
 public class InteractionHandler
 {
+	private const int buffer = 10;
+	private const int boxWidth = 120;
+
+	private static int currentPos;
+
 	public static void Update()
 	{
-
+		if (Input.GetKeyDown(KeyCode.KeypadPlus)) 
+		{
+			Simulation.Instance.MaxPopulation += 1;
+		}
+		
+		if (Input.GetKeyDown(KeyCode.KeypadMultiply))
+		{
+			Simulation.Instance.MaxPopulation += 10;
+		}
+		
+		if (Input.GetKeyDown(KeyCode.KeypadMinus))
+		{
+			Simulation.Instance.MaxPopulation -= 1;
+		}
+		
+		if (Input.GetKeyDown(KeyCode.KeypadDivide))
+		{
+			Simulation.Instance.MaxPopulation -= 10;
+		}
 	}
 
 	public static void OnGUI()
 	{
+		currentPos = 0;
+
+		currentPos += buffer;
 		HandlePopulation();
+		
+		currentPos += buffer;
+		HandlePause();
 	}
 
 	private static void HandlePopulation()
 	{
-		GUI.Box(new Rect(10, 10, 110, 90), String.Format("Population: {0}", Simulation.Instance.Population));
+		int elemWidth = (boxWidth - 3*buffer) / 2;
+		int elemHeight = 2 * buffer;
+		int leftCol = 2 * buffer;					// left buffer + one from frame to element
+		int rightCol = 3 * buffer + elemWidth;		// left buffer + one from frame + one between them + width of left elem
+		int totalHeight = 2 * elemHeight + 5 * buffer;
 
-		if (GUI.Button(new Rect(20, 40, 40, 20), "(+)"))
+		GUI.Box(new Rect(buffer, currentPos, boxWidth, totalHeight), 
+			String.Format("Population: {0}/{1}", Simulation.Instance.Population, Simulation.Instance.MaxPopulation));
+
+		currentPos += 3 * buffer;					// Add padding at the top + text
+
+		if (GUI.Button(new Rect(leftCol, currentPos, elemWidth, elemHeight), "(+)"))
 		{
-			Simulation.Instance.ChangePopulation(1);
+			Simulation.Instance.MaxPopulation += 1;
 		}
 
-		if (GUI.Button(new Rect(70, 40, 40, 20), "(+10)"))
+		if (GUI.Button(new Rect(rightCol, currentPos, elemWidth, elemHeight), "(+10)"))
 		{
-			Simulation.Instance.ChangePopulation(10);
+			Simulation.Instance.MaxPopulation += 10;
 		}
 
-		if (GUI.Button(new Rect(20, 70, 40, 20), "(-)"))
+		currentPos += elemHeight + buffer;
+
+		if (GUI.Button(new Rect(leftCol, currentPos, elemWidth, elemHeight), "(-)"))
 		{
-			Simulation.Instance.ChangePopulation(-1);
+			Simulation.Instance.MaxPopulation -= 1;
 		}
 		
-		if (GUI.Button(new Rect(70, 70, 40, 20), "(-10)"))
+		if (GUI.Button(new Rect(rightCol, currentPos, elemWidth, elemHeight), "(-10)"))
 		{
-			Simulation.Instance.ChangePopulation(-10);
+			Simulation.Instance.MaxPopulation -= 10;
+		}
+		
+		currentPos += elemHeight + buffer;
+	}
+
+	private static void HandlePause()
+	{
+		GUI.Box(new Rect(buffer, currentPos, boxWidth, 4 * buffer), String.Empty);
+
+		currentPos += buffer;
+
+		if (GUI.Button(new Rect(2 * buffer, currentPos, boxWidth - 2*buffer, 2*buffer), Simulation.Instance.Playing ? "Pause" : "Play"))
+		{
+			Simulation.Instance.Playing = !Simulation.Instance.Playing;
 		}
 	}
 }

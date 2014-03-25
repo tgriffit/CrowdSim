@@ -21,11 +21,11 @@ public static class AStarHelper
 	}
 	
 	// Distance between Nodes
-	static float Distance<T>(T start, T goal) where T: IPathNode<T>
+	static float Distance<T>(T start, T goal, int time, float speed) where T : IPathNode<T>
 	{
 		if(Invalid(start) || Invalid(goal))
 			return float.MaxValue;
-		return Vector3.Distance(start.Position, goal.Position);
+		return start.GetDistance(goal, time, speed);
 	}
 	
 	// Base cost Estimate - this would need to be evoled for your project based on true cost
@@ -36,7 +36,7 @@ public static class AStarHelper
 	}
 	
 	// Find the current lowest score path
-	static T LowestScore<T>(List<T> openset, Dictionary<T, float> scores) where T: IPathNode<T>
+	static T LowestScore<T>(List<T> openset, Dictionary<T, float> scores) where T : IPathNode<T>
 	{
 		int index = 0;
 		float lowScore = float.MaxValue;
@@ -54,7 +54,7 @@ public static class AStarHelper
 	
 	
 	// Calculate the A* path
-	public static List<T> Calculate<T>(T start, T goal) where T: IPathNode<T>
+	public static List<IPathAction<T>> Calculate<T>(T start, T goal, float speed) where T : IPathNode<T>
 	{
 		List<T> closedset = new List<T>();    // The set of nodes already evaluated.
 		List<T> openset = new List<T>();    // The set of tentative nodes to be evaluated.
@@ -75,8 +75,10 @@ public static class AStarHelper
 			T x = LowestScore(openset, fScore);
 			if(x.Equals(goal))
 			{
-				List<T> result = new List<T>();
-				ReconstructPath(cameFrom, x, ref result);
+				int time = 0;
+
+				List<IPathAction<T>> result = new List<IPathAction<T>>();
+				ReconstructPath(cameFrom, x, default(T), speed, ref result, ref time);
 				return result;
 			}
 			openset.Remove(x);
@@ -86,7 +88,7 @@ public static class AStarHelper
 			{
 				if(AStarHelper.Invalid(y) || closedset.Contains(y))
 					continue;
-				float tentativeGScore = gScore[x] + Distance(x, y);
+				float tentativeGScore = gScore[x] + Distance(x, y, (int)(gScore[x] / speed), speed);
 				
 				bool tentativeIsBetter = false;
 				if(!openset.Contains(y))
@@ -107,20 +109,20 @@ public static class AStarHelper
 			}
 		}
 
-		Debug.LogError("Failed to find path!");
 		return null;
-		
 	}
-	
+
 	// Once the goal has been found we now reconstruct the steps taken to get to the path
-	static void ReconstructPath<T>(Dictionary<T, T> cameFrom, T currentNode, ref List<T> result) where T: IPathNode<T>
+	static void ReconstructPath<T>(Dictionary<T, T> cameFrom, T currentNode, T previousNode, float speed, ref List<IPathAction<T>> result, ref int time) where T : IPathNode<T>
 	{
-		if(cameFrom.ContainsKey(currentNode))
+		if (cameFrom.ContainsKey(currentNode))
 		{
-			ReconstructPath(cameFrom, cameFrom[currentNode], ref result);
-			result.Add(currentNode);
-			return;
+			ReconstructPath(cameFrom, cameFrom[currentNode], currentNode, speed, ref result, ref time);
 		}
-		result.Add(currentNode);
+
+		if (previousNode != null) 
+		{
+			result.AddRange(currentNode.GetPathTo(previousNode, speed, ref time));
+		}
 	}
 }

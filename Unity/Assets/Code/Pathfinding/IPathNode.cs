@@ -14,4 +14,8 @@ public interface IPathNode<T>
 	bool Invalid { get; }
 
 	float GetDistanceHeuristic(T other);
+	float GetDistance(T other, int time, float speed);
+
+	// Find the list of actions required to pass from one node to another
+	List<IPathAction<T>> GetPathTo(T other, float speed, ref int time);
 }

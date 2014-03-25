@@ -38,6 +38,6 @@ public class AgentSpawner : MonoBehaviour
 	public static Agent GetAgent()
 	{
 		// Returns an agent with a random appearance from the list
-		return new Agent(Instance.models[Random.Range(0, Instance.models.Length)]);
+		return new Agent(Utilities.GetRandomEntry(Instance.models));
 	}
 }

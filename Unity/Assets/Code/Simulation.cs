@@ -12,56 +12,51 @@ public class Simulation
 	private Grid grid;
 	private List<Agent> agents;
 
-	private int maxpopulation = 1;
+	private int maxpopulation;
+	public int MaxPopulation 
+	{ 
+		get { return maxpopulation; } 
+		set
+		{
+			maxpopulation = value < 0 ? 0 : value;
+		}
+	}
 
 	// The current number of agents in the simulation
 	public int Population { get { return agents.Count; } }
+	public bool Playing { get; set; }
 
 	public void Start()
 	{
 		Application.targetFrameRate = FPS;
-
 		agents = new List<Agent>();
+		maxpopulation = 5;
+		Playing = true;
 	}
 
 	// Updates everything to the next frame!
 	public void Update()
 	{
 		grid.DebugDraw();
-
-		if (Input.GetKeyDown(KeyCode.KeypadPlus)) 
-		{
-			ChangePopulation(1);
-		}
 		
-		if (Input.GetKeyDown(KeyCode.KeypadMultiply))
+		if (Playing)
 		{
-			ChangePopulation(10);
-		}
+			grid.Update ();
 
-		if (Input.GetKeyDown(KeyCode.KeypadMinus))
-		{
-			ChangePopulation(-1);
-		}
-		
-		if (Input.GetKeyDown(KeyCode.KeypadDivide))
-		{
-			ChangePopulation(-10);
-		}
+			agents.ForEach (a => a.Update ());
 
-		agents.ForEach(a => a.Update());
-
-		if (agents.Count < maxpopulation)
-		{
-			AddAgent();
-		}
-		else if (agents.Count > maxpopulation)
-		{
-			Agent a = agents.FirstOrDefault();
-
-			if (a != null)
+			if (agents.Count < maxpopulation)
 			{
-				a.Unspawn();
+				AddAgent();
+			} 
+			else if (agents.Count > maxpopulation)
+			{
+				Agent a = agents.FirstOrDefault ();
+
+				if (a != null)
+				{
+					a.Unspawn();
+				}
 			}
 		}
 	}
@@ -78,12 +73,21 @@ public class Simulation
 		// Finds a random entrance tile to spawn on
 		// TODO: Only spawn in empty tiles
 		var entrances = grid.GetEntranceTiles();
-		var entrance = entrances.ToArray()[Random.Range(0, entrances.Count)];
+
+		if (!entrances.Any())
+		{
+			// No proper entrances found. We'll have to wait until one frees up.
+			return;
+		}
+
+		var entrance = Utilities.GetRandomEntry(entrances);
 
 		agent.Goal = FindGoal(entrance);
 		
-		agent.Spawn(entrance);
-		agents.Add(agent);
+		if (agent.Spawn(entrance))
+		{
+			agents.Add(agent);
+		}
 	}
 
 	public void RemoveAgent(Agent a)
@@ -91,17 +95,11 @@ public class Simulation
 		agents.Remove(a);
 	}
 	
-	public void ChangePopulation(int mod)
-	{
-		maxpopulation += mod;
-		maxpopulation = maxpopulation < 0 ? 0 : maxpopulation;
-	}
-	
 	// Finds a random exit tile. We may want to add some other criteria as well.
 	// We also 
 	private Tile FindGoal(Tile entrance)
 	{
-		var exits = grid.GetExitTiles().ToArray();
-		return exits[Random.Range(0, exits.Length)];
+		var exits = grid.GetExitTiles();
+		return Utilities.GetRandomEntry(exits);
 	}
 }

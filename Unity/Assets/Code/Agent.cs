@@ -1,18 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class Agent
 {
-	private const float AGENTSPEED = 1.33f;								// Ideal walking speed in m/s
-	private const float SPEEDPERFRAME = AGENTSPEED / Simulation.FPS;	// How far each agent should move per frame
+	private float speed;								// Ideal walking speed in m/s
+	private float speedPerFrame;						// How far each agent should move per frame
 
 	// The prefab we should spawn
 	private GameObject model;
 
 	// our spawned instance
 	private GameObject agent;
-	private List<Tile> path;
+	private List<IPathAction<Tile>> path;
 
 	// Each agent gets a unique color to depict their path so we can tell which path belongs to each one
 	private Color debugColor;
@@ -22,25 +23,29 @@ public class Agent
 
 	public Agent (GameObject m)
 	{
+		// An agent's speed is within 5% of 1.33 m/s
+		speed = 1.33f * UnityEngine.Random.Range(0.95f, 1.05f);
+		speedPerFrame = speed / Simulation.FPS;
+
 		this.model = m;
-		debugColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
+		debugColor = new Color(UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, 1.0f));
 	}
 
 	// Spawns the agent facing towards it's goal tile.
-	public void Spawn(Tile location)
+	public bool Spawn(Tile location)
 	{
-		Spawn(location, Goal.Position);
-	}
+		path = AStarHelper.Calculate(location, Goal, speedPerFrame);
 
-	// Spawns the agent facing towards the specified location.
-	public void Spawn(Tile location, Vector3 direction)
-	{
-		agent = (GameObject)GameObject.Instantiate(model, location.Position, Quaternion.LookRotation(direction));
+		if (path == null)
+		{
+			Debug.LogError(String.Format("Failed to find path from [{0},{1}] to [{2},{3}]!", location.X, location.Z, Goal.X, Goal.Z));
+			Debug.DrawLine(location.Position, Goal.Position, Color.red, 5);
+			return false;
+		}
 
-		path = AStarHelper.Calculate(location, Goal);
-
-		// We don't need our current location in the path
-		path.Remove(location);
+		agent = (GameObject)GameObject.Instantiate(model, location.Position, Quaternion.LookRotation(Goal.Position));
+		ClaimPath();
+		return true;
 	}
 
 	public void Unspawn()
@@ -51,39 +56,119 @@ public class Agent
 
 	public void Update()
 	{
-		var p = path.ToArray();
-		Tile target = p[0];
+		DrawPath();
 
-		Debug.DrawLine(agent.transform.position, target.Position, debugColor);
-
-		for (int i = 0; i < path.Count - 1; ++i)
+		if (path.Any()) 
 		{
-			Debug.DrawLine(p[i].Position, p[i + 1].Position, debugColor);
+			Move();
 		}
+	}
 
-		// Moves the agent towards the next tile in it's magical journey.
-		agent.transform.position = Vector3.MoveTowards(agent.transform.position, target.Position, SPEEDPERFRAME);
+	private void Move()
+	{
+		PathfindingMovement target = path.FirstOrDefault() as PathfindingMovement;
+		PathfindingDelay delay = path.FirstOrDefault() as PathfindingDelay;
 
-		if (Vector3.Distance(target.Position, agent.transform.position) < 0.05)
+		if (target != null)
 		{
-			path.RemoveAt(0);
+			Tile destination = target.Destination;
 
-			if (target == Goal)
+			// Moves the agent towards the next tile in it's magical journey.
+			agent.transform.position = Vector3.MoveTowards (agent.transform.position, target.Destination.Position, speedPerFrame);
+
+			if (Vector3.Distance (destination.Position, agent.transform.position) < 0.05)
 			{
-				// We've reached our goal! Now we need to figure out what we're supposed to do now.
-				var action = target.GetTileAction();
+				path.RemoveAt (0);
 
-				// TODO: If we add any actions that don't unspawn the agent, we need to give it a new goal.
-				if (action != null)
+				if (path.Any ())
 				{
-					action(this);
+					// Rotate towards our new target
+					var nextTarget = path.FirstOrDefault () as PathfindingMovement;
+
+					if (nextTarget != null)
+					{
+						agent.transform.LookAt (nextTarget.Destination.Position);
+					}
+				} else
+				{
+					// We've reached our goal! Now we need to figure out what we're supposed to do now.
+					var action = destination.GetTileAction ();
+				
+					// TODO: If we add any actions that don't unspawn the agent, we need to give it a new goal.
+					if (action != null)
+					{
+						action (this);
+					}
 				}
+			}
+		}
+		else if (delay != null)
+		{
+			if (--delay.Delay <= 0)
+			{
+				path.RemoveAt(0);
+			}
+		}
+	}
+
+	private void ClaimPath()
+	{
+		// The number of frames until we reach a given tile
+		int time = 0;
+
+		for (int i = 0; i < path.Count; ++i) 
+		{
+			IPathAction<Tile> current = path.ElementAt(i);
+
+			if (current is PathfindingDelay)
+			{
+				PathfindingDelay delay = current as PathfindingDelay;
+				delay.Origin.AddClaim(time, delay.Delay);
+				time += delay.Delay;
 			}
 			else
 			{
-				// Rotate towards our new target
-				var nextTarget = path.FirstOrDefault();
-				agent.transform.LookAt(nextTarget.Position);
+				PathfindingMovement move = current as PathfindingMovement;
+				float dist = Vector3.Distance(move.Origin.Position, move.Destination.Position);
+
+				int numframes = (int)(dist / speedPerFrame);
+				
+				// Half of the trip will be in each tile
+				move.Origin.AddClaim(time, numframes / 2);
+				move.Destination.AddClaim(time, numframes / 2);
+
+				time += numframes;
+			}
+		}
+	}
+
+	private void DrawPath()
+	{
+		if (!path.Any()) 
+		{
+			return;
+		}
+
+		//Debug.DrawLine(agent.transform.position, path.ElementAt(0).Origin.Position, debugColor);
+
+		foreach (IPathAction<Tile> action in path) 
+		{
+			PathfindingMovement move = action as PathfindingMovement;
+			PathfindingDelay delay = action as PathfindingDelay;
+
+			if (move != null)
+			{
+				Debug.DrawLine(move.Origin.Position, move.Destination.Position, debugColor);
+			}
+			else
+			{
+				Vector3 topLeft 	= delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
+				Vector3 topRight 	= delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
+				Vector3 bottomLeft 	= delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
+				Vector3 bottomRight = delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
+
+				Debug.DrawLine(topLeft, bottomRight, debugColor);
+				Debug.DrawLine(topRight, bottomLeft, debugColor);
 			}
 		}
 	}
