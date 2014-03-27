@@ -90,6 +90,8 @@ public class Tile : IPathNode<Tile>
 	private List<TileClaim> claims;
 	public void AddClaim(int start, int duration)
 	{
+		int d = start + duration;
+		Debug.Log(String.Format("[{0},{1}]: ({2},{3})", X, Z, start, d));
 		claims.Add(new TileClaim(){ StartTime = start, EndTime = start+duration });
 		claims.OrderBy(c => c.StartTime);
 	}
@@ -102,6 +104,11 @@ public class Tile : IPathNode<Tile>
 		// claim hasn't started yet. Since we constantly sort the claims, the
 		// first one is guaranteed to have the lowest start time.
 		return !(first == null || first.StartTime > 0);
+	}
+
+	public bool MultipleClaims()
+	{
+		return (claims.Count(c => c.StartTime <= 0) > 1);
 	}
 
 	// The action to take when an agent reaches it's goal.
@@ -138,7 +145,8 @@ public class Tile : IPathNode<Tile>
 		{
 			// Check to see whether our journey will interfere with an existing claim
 			if ((claim.StartTime <= time + delay && claim.EndTime >= time + delay)
-			    || (claim.StartTime <= time + duration + delay && claim.EndTime >= time + delay + delay))
+			    || (claim.StartTime <= time + duration + delay && claim.EndTime >= time + duration + delay)
+			    || (claim.StartTime >= time + delay && claim.EndTime <= time + duration + delay))
 			{
 				delay += claim.EndTime - time;
 			}
@@ -188,7 +196,7 @@ public class Tile : IPathNode<Tile>
 				Debug.DrawLine(leftMid, upperMid, Color.blue);
 			}
 
-			if (CurrentlyClaimed())
+			if (MultipleClaims())
 			{
 				Debug.DrawLine(upperLeft, upperMid, Color.red);
 				Debug.DrawLine(upperRight, upperMid, Color.red);
@@ -198,6 +206,17 @@ public class Tile : IPathNode<Tile>
 				Debug.DrawLine(lowerLeft, leftMid, Color.red);
 				Debug.DrawLine(upperRight, rightMid, Color.red);
 				Debug.DrawLine(lowerRight, rightMid, Color.red);
+			}
+			else if (CurrentlyClaimed())
+			{
+				Debug.DrawLine(upperLeft, upperMid, Color.blue);
+				Debug.DrawLine(upperRight, upperMid, Color.blue);
+				Debug.DrawLine(lowerLeft, lowerMid, Color.blue);
+				Debug.DrawLine(lowerRight, lowerMid, Color.blue);
+				Debug.DrawLine(upperLeft, leftMid, Color.blue);
+				Debug.DrawLine(lowerLeft, leftMid, Color.blue);
+				Debug.DrawLine(upperRight, rightMid, Color.blue);
+				Debug.DrawLine(lowerRight, rightMid, Color.blue);
 			}
 		}
 	}

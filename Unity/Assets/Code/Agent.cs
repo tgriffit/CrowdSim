@@ -132,10 +132,11 @@ public class Agent
 				float dist = Vector3.Distance(move.Origin.Position, move.Destination.Position);
 
 				int numframes = (int)(dist / speedPerFrame);
+				int halfframes = numframes / 2;
 				
 				// Half of the trip will be in each tile
-				move.Origin.AddClaim(time, numframes / 2);
-				move.Destination.AddClaim(time + numframes / 2, numframes / 2);
+				move.Origin.AddClaim(time, halfframes);
+				move.Destination.AddClaim(time + halfframes, halfframes);
 
 				time += numframes;
 			}
