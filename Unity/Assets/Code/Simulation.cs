@@ -10,6 +10,7 @@ public class Simulation
 	public const bool Debug = true;
 
 	public const int FPS = 30;								// Our desired frames per second
+	//private int i = 0;
 
 	private Grid grid;
 	private List<Agent> agents;
@@ -49,6 +50,7 @@ public class Simulation
 
 			if (agents.Count < maxpopulation)
 			{
+				//if (i++ % 30 == 0)
 				AddAgent();
 			} 
 			else if (agents.Count > maxpopulation)
@@ -61,6 +63,8 @@ public class Simulation
 				}
 			}
 		}
+
+		//Playing = false;
 	}
 
 	public void SetGrid(Grid g)

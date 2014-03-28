@@ -55,10 +55,19 @@ public class Tile : IPathNode<Tile>
 
 		float dist = Vector3.Distance(Position, other.Position);
 		int framesOfMovement = (int)(dist / speed);
-		int delay = FindDelay(time, framesOfMovement);
+		//int delay = other.FindDelay(time, framesOfMovement);
+		int delay = other.FindDelay(time + framesOfMovement / 2, framesOfMovement);
+
+//		if (other.X == 3 && other.Z == 1)
+//		{
+//			Debug.Log(String.Format("[{0},{1}] time: {2} {3} {4}", X, Z, time, delay, otherDelay));
+//		}
+		
+		//delay += otherDelay;
 
 		if (delay > 0)
 		{
+//			Debug.Log(other.X + " " + other.Z);
 			list.Add(new PathfindingDelay() { Origin = this, Delay = delay });
 		}
 
@@ -86,13 +95,12 @@ public class Tile : IPathNode<Tile>
 	// Agents can "claim" the tile a certain number of updates in advance.
 	// We keep track of when each one will be in the tile so that others can
 	// move through it up until that point.
-	// TODO: Use this.
 	private List<TileClaim> claims;
 	public void AddClaim(int start, int duration)
 	{
-		int d = start + duration;
-		Debug.Log(String.Format("[{0},{1}]: ({2},{3})", X, Z, start, d));
-		claims.Add(new TileClaim(){ StartTime = start, EndTime = start+duration });
+		//int d = start + duration;
+		//Debug.Log(String.Format("[{0},{1}]: ({2},{3})", X, Z, start, d));
+		claims.Add(new TileClaim(){ StartTime = start - 3, EndTime = start+duration });
 		claims.OrderBy(c => c.StartTime);
 	}
 
