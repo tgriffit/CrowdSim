@@ -46,7 +46,7 @@ public class Tile : IPathNode<Tile>
 		float dist = Vector3.Distance(Position, other.Position);
 		int framesOfMovement = (int)(dist / speed);
 
-		return framesOfMovement + FindDelay(framenum, framesOfMovement);
+		return framesOfMovement + other.FindDelay(framenum + framesOfMovement/2, framesOfMovement);
 	}
 
 	public List<IPathAction<Tile>> GetPathTo(Tile other, float speed, ref int time)
