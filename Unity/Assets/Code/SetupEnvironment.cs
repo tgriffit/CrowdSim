@@ -20,18 +20,18 @@ public class SetupEnvironment : MonoBehaviour
 		if (meshFilter == null)
 		{
 			Debug.LogError("There's no Mesh Filter attached to this component! " +
-			               "This script should be added to the portion of the GameObject that controls the mesh.");
+			               "This script should be added to the portion of the GameObject that controls the mesh you want agents to move on!");
 		}
 		var mesh = meshFilter.mesh;
 
-		Vector3 center = gameObject.transform.position;
+		Vector3 center = gameObject.renderer.bounds.center;
 		Vector3 size = gameObject.renderer.bounds.size;
 
 		float height = FindGroundLevel(mesh.normals);
 
 		Vector3 corner = new Vector3(center.x - size.x / 2, height, center.z - size.z / 2);
 
-		Grid g = new Grid(corner, (int)(size.x / Tile.TileSize), (int)(size.z / Tile.TileSize), mesh.vertices, mesh.triangles);
+		Grid g = new Grid(corner, (int)(size.x / Tile.TileSize), (int)(size.z / Tile.TileSize), ref mesh);
 
 		Simulation.Instance.Start();
 		Simulation.Instance.SetGrid(g);

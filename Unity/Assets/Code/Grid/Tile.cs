@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class Tile : IPathNode<Tile>
 {
-	public const float TileSize = 3.0f;		// Should change to match the width of our model
+	public const float TileSize = 0.75f;		// Should change to match the width of our model
 
 	//private const float FlatTolerance = 0.05f;		// I have no idea what our tolerance for y-variation in terrain should be
 	private const float Clearance = 3.0f;				// The minimum clearance over the ground for a tile to be considered IsWalkable

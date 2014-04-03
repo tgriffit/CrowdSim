@@ -12,7 +12,7 @@ public class Grid
 	private int maxX;
 	private int maxZ;
 
-	public Grid(Vector3 corner, int x, int z, Vector3[] vertices, int[] triangles)
+	public Grid(Vector3 corner, int x, int z, ref Mesh mesh)
 	{	
 		maxX = x;
 		maxZ = z;
