@@ -12,14 +12,17 @@ class Skeleton:
 
     # create an ordering of the joints based on channNum
     def initJointsList(self):
+        # add all non-End Site joints to the jointsList
         self.addJointToJointsList(self.jointsRoot)
         # sort them by channel number
         self.jointsList.sort(key=operator.attrgetter('chanNum'))
 
     def addJointToJointsList(self, joint):
+        # Handle base case of End Site joint node
+        if joint.chanNum == -1:
+            return
+
         self.jointsList.append(joint)
-        print(joint.childJoints)
-        print("num children: " + str(len(joint.childJoints)))
         for j in joint.childJoints:
             self.addJointToJointsList(j)
 
@@ -32,9 +35,13 @@ class Skeleton:
 
     def addMotionToJoints(self, motion):
         # a list of joint motion data organized by joint chanNum
-        jointFrameData = []
-        for frame in motion.samples:
-            pass
+        index = 0
+        for joint in self.jointsList:
+            # extract the frame motion for just this joint's channel
+            for frame in motion.samples:
+                chanFrame = frame[index:index+joint.numChannels]
+                joint.motionFrames.append(tuple(chanFrame))
+            index += joint.numChannels
 
 
 class Joint:
@@ -133,9 +140,7 @@ def readInJoint(file):
             if childJoint is None:
                 continueParse = False
             else:
-                print("Adding joint: " + childJoint.name + " to " + newJoint.name)
                 newJoint.childJoints.append(childJoint)
-                print("len childJoints of " + newJoint.name + ": " + str(len(newJoint.childJoints)))
     else:
         newJoint.numChannels = 0
         newJoint.chanNum = -1
