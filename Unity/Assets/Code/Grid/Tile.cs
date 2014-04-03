@@ -6,17 +6,17 @@ using UnityEditor;
 
 public class Tile : IPathNode<Tile>
 {
-	public const float TILESIZE = 3.0f;		// Should change to match the width of our model
+	public const float TileSize = 3.0f;		// Should change to match the width of our model
 
-	private const float TOLERANCE = 0.05f;		// I have no idea what our tolerance for y-variation should be
-	private const float CLEARANCE = 3.0f;		// The minimum clearance over the ground for a tile to be considered IsWalkable
+	//private const float FlatTolerance = 0.05f;		// I have no idea what our tolerance for y-variation in terrain should be
+	private const float Clearance = 3.0f;				// The minimum clearance over the ground for a tile to be considered IsWalkable
 
 	public Tile (Vector3 corner, int x, int z)
 	{
 		X = x;
 		Z = z;
 
-		Position = new Vector3(corner.x + TILESIZE / 2, corner.y, corner.z + TILESIZE / 2);
+		Position = new Vector3(corner.x + TileSize / 2, corner.y, corner.z + TileSize / 2);
 
 		IsWalkable = TestWalkability();
 		claims = new List<TileClaim>();
@@ -55,23 +55,13 @@ public class Tile : IPathNode<Tile>
 
 		float dist = Vector3.Distance(Position, other.Position);
 		int framesOfMovement = (int)(dist / speed);
-		//int delay = other.FindDelay(time, framesOfMovement);
 		int delay = other.FindDelay(time + framesOfMovement / 2, framesOfMovement);
-
-//		if (other.X == 3 && other.Z == 1)
-//		{
-//			Debug.Log(String.Format("[{0},{1}] time: {2} {3} {4}", X, Z, time, delay, otherDelay));
-//		}
-		
-		//delay += otherDelay;
 
 		if (delay > 0)
 		{
-//			Debug.Log(other.X + " " + other.Z);
 			list.Add(new PathfindingDelay() { Origin = this, Delay = delay });
 		}
 
-		//list.Add (new PathfindingDelay () {Origin = this, Delay = 10});
 		list.Add(new PathfindingMovement() { Origin = this, Destination = other });
 
 		time += framesOfMovement + delay;
@@ -98,9 +88,7 @@ public class Tile : IPathNode<Tile>
 	private List<TileClaim> claims;
 	public void AddClaim(int start, int duration)
 	{
-		//int d = start + duration;
-		//Debug.Log(String.Format("[{0},{1}]: ({2},{3})", X, Z, start, d));
-		claims.Add(new TileClaim(){ StartTime = start - 3, EndTime = start+duration });
+		claims.Add(new TileClaim(){ StartTime = start, EndTime = start+duration });
 		claims.OrderBy(c => c.StartTime);
 	}
 
@@ -137,7 +125,7 @@ public class Tile : IPathNode<Tile>
 		// Throws a sphere at the terrain to detect obstacles.
 		// This should also detect any static objects that get added to the scene, allowing users to
 		// spruce up the environment.
-		return !Physics.SphereCastAll(Position - new Vector3(0, TILESIZE, 0), TILESIZE / 2, Vector3.up).Any();
+		return !Physics.SphereCastAll(Position - new Vector3(0, TileSize, 0), TileSize / 2, Vector3.up).Any();
 	}
 
 	// Finds how long an agent will have to delay if it wants to enter this tile at a time starting at
@@ -148,7 +136,6 @@ public class Tile : IPathNode<Tile>
 		// can enter the tile.
 		int delay = 0;
 
-		// GAH. Algorithms are hard.
 		foreach (TileClaim claim in claims)
 		{
 			// Check to see whether our journey will interfere with an existing claim
@@ -167,17 +154,17 @@ public class Tile : IPathNode<Tile>
 	{
 		if (Simulation.Debug)
 		{
-			var upperLeft = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
-			var upperRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z + TILESIZE / 2);
-			var lowerLeft = new Vector3(Position.x - TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
-			var lowerRight = new Vector3(Position.x + TILESIZE / 2, Position.y, Position.z - TILESIZE / 2);
+			var upperLeft = new Vector3(Position.x - TileSize / 2, Position.y, Position.z + TileSize / 2);
+			var upperRight = new Vector3(Position.x + TileSize / 2, Position.y, Position.z + TileSize / 2);
+			var lowerLeft = new Vector3(Position.x - TileSize / 2, Position.y, Position.z - TileSize / 2);
+			var lowerRight = new Vector3(Position.x + TileSize / 2, Position.y, Position.z - TileSize / 2);
 
 			// These points are the midpoints between the center and the edges - if they
 			// are on the edge lines it becomes too chaotic.
-			var upperMid = new Vector3(Position.x, Position.y, Position.z + TILESIZE / 4);
-			var lowerMid = new Vector3(Position.x, Position.y, Position.z - TILESIZE / 4);
-			var leftMid = new Vector3(Position.x - TILESIZE / 4, Position.y, Position.z);
-			var rightMid = new Vector3(Position.x + TILESIZE / 4, Position.y, Position.z);
+			var upperMid = new Vector3(Position.x, Position.y, Position.z + TileSize / 4);
+			var lowerMid = new Vector3(Position.x, Position.y, Position.z - TileSize / 4);
+			var leftMid = new Vector3(Position.x - TileSize / 4, Position.y, Position.z);
+			var rightMid = new Vector3(Position.x + TileSize / 4, Position.y, Position.z);
 
 			Debug.DrawLine(upperLeft, upperRight, Color.blue);
 			Debug.DrawLine(upperRight, lowerRight, Color.blue);

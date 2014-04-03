@@ -28,7 +28,12 @@ public class Agent
 		speedPerFrame = speed / Simulation.FPS;
 
 		this.model = m;
-		debugColor = new Color(UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, 1.0f));
+
+		// Creates a unique colour to display the path for each agent
+		if (Simulation.Debug)
+		{
+			debugColor = new Color(UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, 1.0f), UnityEngine.Random.Range(0.0f, 1.0f));
+		}
 	}
 
 	// Spawns the agent facing towards it's goal tile.
@@ -76,7 +81,7 @@ public class Agent
 			// Moves the agent towards the next tile in it's magical journey.
 			agent.transform.position = Vector3.MoveTowards (agent.transform.position, target.Destination.Position, speedPerFrame);
 
-			if (Vector3.Distance (destination.Position, agent.transform.position) < 0.05)
+			if (Vector3.Distance (destination.Position, agent.transform.position) < Simulation.Tolerance)
 			{
 				path.RemoveAt (0);
 
@@ -163,10 +168,10 @@ public class Agent
 				} 
 				else
 				{
-					Vector3 topLeft = delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
-					Vector3 topRight = delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, Tile.TILESIZE / 4);
-					Vector3 bottomLeft = delay.Origin.Position + new Vector3(-Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
-					Vector3 bottomRight = delay.Origin.Position + new Vector3(Tile.TILESIZE / 4, 0, -Tile.TILESIZE / 4);
+					Vector3 topLeft = delay.Origin.Position + new Vector3(-Tile.TileSize / 4, 0, Tile.TileSize / 4);
+					Vector3 topRight = delay.Origin.Position + new Vector3(Tile.TileSize / 4, 0, Tile.TileSize / 4);
+					Vector3 bottomLeft = delay.Origin.Position + new Vector3(-Tile.TileSize / 4, 0, -Tile.TileSize / 4);
+					Vector3 bottomRight = delay.Origin.Position + new Vector3(Tile.TileSize / 4, 0, -Tile.TileSize / 4);
 
 					Debug.DrawLine(topLeft, bottomRight, debugColor);
 					Debug.DrawLine(topRight, bottomLeft, debugColor);
