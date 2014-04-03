@@ -31,7 +31,7 @@ public class SetupEnvironment : MonoBehaviour
 
 		Vector3 corner = new Vector3(center.x - size.x / 2, height, center.z - size.z / 2);
 
-		Grid g = new Grid(corner, (int)(size.x / Tile.TILESIZE), (int)(size.z / Tile.TILESIZE), mesh.vertices, mesh.triangles);
+		Grid g = new Grid(corner, (int)(size.x / Tile.TileSize), (int)(size.z / Tile.TileSize), mesh.vertices, mesh.triangles);
 
 		Simulation.Instance.Start();
 		Simulation.Instance.SetGrid(g);
@@ -40,7 +40,6 @@ public class SetupEnvironment : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		InteractionHandler.Update();
 		Simulation.Instance.Update();
 	}
 

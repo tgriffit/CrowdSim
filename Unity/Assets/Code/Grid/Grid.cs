@@ -24,7 +24,7 @@ public class Grid
 
 			for (int j = 0; j < grid[i].Length; ++j)
 			{
-				grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TILESIZE, corner.y, corner.z + j * Tile.TILESIZE), i, j);
+				grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TileSize, corner.y, corner.z + j * Tile.TileSize), i, j);
 			}
 		}
 

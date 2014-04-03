@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,8 @@ public class Simulation
 	public static Simulation Instance = new Simulation();
 
 	public const bool Debug = true;
-
+	public const float Tolerance = 0.05f;
 	public const int FPS = 30;								// Our desired frames per second
-	//private int i = 0;
 
 	private Grid grid;
 	private List<Agent> agents;
@@ -40,17 +40,17 @@ public class Simulation
 	// Updates everything to the next frame!
 	public void Update()
 	{
+		InteractionHandler.Update();
 		grid.DebugDraw();
 		
 		if (Playing)
 		{
-			grid.Update ();
+			grid.Update();
 
 			agents.ForEach (a => a.Update ());
 
 			if (agents.Count < maxpopulation)
 			{
-				//if (i++ % 30 == 0)
 				AddAgent();
 			} 
 			else if (agents.Count > maxpopulation)
@@ -64,7 +64,13 @@ public class Simulation
 			}
 		}
 
+		// Uncommenting this will pause the simulation after every frame
 		//Playing = false;
+	}
+
+	public void OnGUI()
+	{
+		InteractionHandler.OnGUI();
 	}
 
 	public void SetGrid(Grid g)
