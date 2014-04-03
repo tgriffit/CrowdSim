@@ -1,6 +1,7 @@
 __author__ = "adneufel@ualberta.ca"
 
-from bvhutils import readInBvh, writeBvhFile
+from bvhutils import writeBvhFile, readInBvh
+from bvhutils import Joint, Skeleton, Motion
 
 def main():
     '''
@@ -21,26 +22,30 @@ def main():
     bvhfile = "../AnimFiles/BVH/walking-497frames.bvh"
     numfile = 1
     
-    skeleton = readInBvh(bvhfile)
+    skel = readInBvh(bvhfile)
     
-    print str(len(skeleton.jointsList))
-    '''
-    for j in skeleton.jointsList:
-        print j.chanNum
-    '''
-    if skeleton == None:
-        print "Error reading bvh file"
-        '''
-    else:
-        genSomeBvh(skeleton, numfile)
-        '''
+    print(str(len(skel.jointsList)))
+    for j in skel.jointsList:
+        print(j.chanNum)
 
-# Based upon the skeleton generate a number of altered bvh files
+    if skel is None:
+        print("Error reading bvh file")
+    #else:
+    #    genSomeBvh(skel, numfile)
+
+
+# Based upon the skel generate a number of altered bvh files
 def genSomeBvh(defaultSkel, num):
-    for i in xrange(0, num):
+    for i in range(0, num):
         skel = genBvh(defaultSkel)
         skelFilepath = defaultSkel.file + str(i)
         writeBvhFile(skelFilepath, skel)
+
+
+def genBvh(skel):
+    newSkel = Skeleton(skel.jointsRoot)
+
+    return newSkel
 
 if __name__ == '__main__':
     main()

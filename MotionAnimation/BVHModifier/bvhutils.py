@@ -3,85 +3,88 @@ import operator
 __author__ = "adneufel@ualberta.ca"
 chanNum = 1
 
+
 ### CLASSES ###
 class Skeleton:
-    jointsList = []
-    jointsRoot = None
-    
     def __init__(self, jointsRoot):
         self.jointsRoot = jointsRoot
+        self.jointsList = []
 
     # create an ordering of the joints based on channNum
     def initJointsList(self):
         self.addJointToJointsList(self.jointsRoot)
         # sort them by channel number
         self.jointsList.sort(key=operator.attrgetter('chanNum'))
-    
+
     def addJointToJointsList(self, joint):
         self.jointsList.append(joint)
-        print "num children: " + str(len(joint.childJoints))
+        print(joint.childJoints)
+        print("num children: " + str(len(joint.childJoints)))
         for j in joint.childJoints:
-            print str(j.chanNum)
-            #self.addJointToJointsList(j)
-    
+            self.addJointToJointsList(j)
+
     def getJointByChanNum(self, num):
         # if tfirst call, call initJointsList
         if self.jointsList is None:
             self.initJointsList()
-        
+
         return self.jointsList[num-1]
-    
+
     def addMotionToJoints(self, motion):
         # a list of joint motion data organized by joint chanNum
         jointFrameData = []
         for frame in motion.samples:
             pass
 
+
 class Joint:
-    name = ""
-    type = ""
-    offset = (0, 0, 0)
-    numChannels = 0
-    chanNum = 0;
-    childJoints = []
-    motionFrames = []
-    
-    def add_child(joint):
-        self.childJoints.append(joint)
-    
-    def set_offset(x, y, z):
+    def __init__(self):
+        self.name = ""
+        self.type = ""
+        self.offset = (0, 0, 0)
+        self.numChannels = 0
+        self.chanNum = 0
+        self.motionFrames = []
+        self.childJoints = []
+
+    def set_offset(self, x, y, z):
         self.offset = (x, y, z)
 
+
 class Motion:
-    numFrames = 0
-    frameTime = 0.0
-    jointNumChannels = []
-    samples = [] # raw lines of motion data as float
+    def __init__(self):
+        self.numFrames = 0
+        self.frameTime = 0.0
+        self.jointNumChannels = []
+        self.samples = []  # raw lines of motion data as float
 
 ## Start of NON-CLASS functions
+
 
 def readInBvh(bvhfile):
     # read in all the lines of the file and strip leading/trailing whitespace
     file = open(bvhfile, "r")
-    
+
     # if first line is not HIERARCHY then the file is erroneous
     firstline = file.readline()
     if not firstline.startswith("HIERARCHY"):
-        print "File format does not conform to BVH standards"
-        print "-> First line is not 'HIERARCHY'"
+        print("File format does not conform to BVH standards")
+        print("-> First line is not 'HIERARCHY'")
         exit(0)
-    
+
     # Parse the HIERARCHY section of the bvh file
     rootJoint = readInJoint(file)
-    
-    # Parse the MOTIN section of the bvh file
+
+    # Parse the MOTION section of the bvh file
     motion = readInMotion(file)
-    
-    skeleton = Skeleton(rootJoint)
-    skeleton.initJointsList()
-    
+
+    skel = Skeleton(rootJoint)
+    skel.initJointsList()
+    skel.addMotionToJoints(motion)
+
     file.close()
-    return Skeleton
+    return skel
+
 
 def readInJoint(file):
     global chanNum
@@ -98,8 +101,9 @@ def readInJoint(file):
     newJoint.name = line[1]
     
     # account for the special case of end site joints
-    if newJoint.name == "End":
-        newJoint.name += " Site"
+    if newJoint.type == "End":
+        newJoint.type = "End Site"
+        newJoint.name = ""
     
     getNextLine(file)   # skip the {
     
@@ -107,7 +111,7 @@ def readInJoint(file):
     line = getNextLine(file)
     
     if line[0] != "OFFSET" or len(line) != 4:
-        print "Error: OFFSET malformed or not where expected in " + newJoint.name
+        print("Error: OFFSET malformed or not where expected in " + newJoint.name)
         exit(0)
     
     x = float(line[1])
@@ -121,20 +125,23 @@ def readInJoint(file):
     if line[0] == "CHANNELS":
         newJoint.numChannels = int(line[1])
         newJoint.chanNum = chanNum
+        chanNum += 1
         
         continueParse = True
-        while(continueParse):
+        while continueParse:
             childJoint = readInJoint(file)
             if childJoint is None:
                 continueParse = False
             else:
+                print("Adding joint: " + childJoint.name + " to " + newJoint.name)
                 newJoint.childJoints.append(childJoint)
-        chanNum += 1
+                print("len childJoints of " + newJoint.name + ": " + str(len(newJoint.childJoints)))
     else:
         newJoint.numChannels = 0
         newJoint.chanNum = -1
     
     return newJoint
+
 
 def isValidJoint(line):
     # if the joint is a ROOT, JOINT or End Site return true
@@ -142,9 +149,11 @@ def isValidJoint(line):
         return True
     return False
 
+
 # get and return the next line from file as a list and strip lead/trail whitespace 
 def getNextLine(file):
     return file.readline().strip().split(" ")
+
 
 def readInMotion(file):
     motion = Motion()
@@ -160,7 +169,7 @@ def readInMotion(file):
     if line[0] == "Frames:":
         motion.numFrames = int(line[1])
     else:
-        print "Error cannot find Frames value"
+        print("Error cannot find Frames value")
         exit(0)
     
     ## SET MOTION frameTime ##
@@ -168,7 +177,8 @@ def readInMotion(file):
     if line[0] == "Frame" and line[1] == "Time:":
         motion.frameTime = float(line[2])
     else:
-        print "Error cannot find FrameTime value"
+        print("Error cannot find FrameTime value")
+        exit(0)
     
     ## PARSE MOTION CHANNEL FRAMES ##
     while True:
@@ -183,5 +193,6 @@ def readInMotion(file):
     
     return motion
 
-def writeBvhFile(filepath, skeleton):
+
+def writeBvhFile(filepath, skel):
     pass
