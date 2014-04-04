@@ -38,6 +38,3 @@ Thumbs.db
 __pycache__
 __pycache__/*
 *.pyc
-
-== Ignore File in TestOuptut ==
-TestOutput/*
