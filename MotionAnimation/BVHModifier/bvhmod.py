@@ -1,6 +1,8 @@
 __author__ = "adneufel@ualberta.ca"
 
-from bvhutils import writeBvhFile, readInBvh, Skeleton, Joint, Motion
+from bvhutils import writeBvhFile, readInBvh, Skeleton, Joint, Motion, getFrameStr
+from modifiers import funcs
+from pprint import pprint
 
 
 # Based upon the skel generate a number of altered bvh files
@@ -13,6 +15,10 @@ def genSomeBvh(defaultSkel, num):
 
 def genBvh(skel):
     newSkel = Skeleton(skel.jointsRoot)
+
+    # call each of the modifiers.funcs on our skeleton
+    for func in funcs:
+        func(newSkel.jointsRoot)
 
     return newSkel
 
@@ -37,6 +43,8 @@ def main():
     numfile = 1
 
     skel = readInBvh(bvhfile)
+
+    writeBvhFile("test.bvh", skel)
 
     if skel is None:
         print("Error reading bvh file")

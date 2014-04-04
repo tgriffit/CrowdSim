@@ -1,6 +1,7 @@
+__author__ = "adneufel@ualberta.ca"
+
 import operator
 
-__author__ = "adneufel@ualberta.ca"
 chanNum = 1
 
 
@@ -9,6 +10,8 @@ class Skeleton:
     def __init__(self, jointsRoot):
         self.jointsRoot = jointsRoot
         self.jointsList = []
+        self.numFrames = 0
+        self.frameTime = 0.0
 
     # create an ordering of the joints based on channNum
     def initJointsList(self):
@@ -34,7 +37,11 @@ class Skeleton:
         return self.jointsList[num-1]
 
     def addMotionToJoints(self, motion):
-        # a list of joint motion data organized by joint chanNum
+        # add the frame info
+        self.frameTime = motion.frameTime
+        self.numFrames = motion.numFrames
+
+        # add all frames of the relevant motion to the relevant joint
         index = 0
         for joint in self.jointsList:
             # extract the frame motion for just this joint's channel
@@ -109,8 +116,7 @@ def readInJoint(file):
     
     # account for the special case of end site joints
     if newJoint.type == "End":
-        newJoint.type = "End Site"
-        newJoint.name = ""
+        newJoint.name = "Site"
     
     getNextLine(file)   # skip the {
     
@@ -199,5 +205,73 @@ def readInMotion(file):
     return motion
 
 
+# return re-assembled frame number num ready to write
+def getFrameStr(rootJoint, num):
+    # if an End Site then ignore it
+    if len(rootJoint.motionFrames) == 0:
+        return ""
+
+    currframes = " ".join(map(str, rootJoint.motionFrames[num]))  # join the list of float into a space-separated string
+
+    # get the string of the children
+    subframes = ""
+    for j in rootJoint.childJoints:
+        subframe = getFrameStr(j, num)
+        subframes += " "
+        subframes += subframe
+
+    return currframes + " " + subframes
+
+
+def writeNumTabs(file, num):
+    for i in range(0, num):
+        print('\t', file=file, end='')
+
+
+def writeJoint(file, joint, depth):
+    sixChans = "Xposition Yposition Zposition Zrotation Yrotation Xrotation"
+    threeChans = "Zrotation Yrotation Xrotation"
+
+    writeNumTabs(file, depth)
+    print(joint.type + " " + joint.name, file=file)
+    writeNumTabs(file, depth)
+    print("{", file=file)
+
+    # write OFFSET section
+    writeNumTabs(file, depth+1)
+    print("OFFSET " + " ".join(map(str, joint.offset)), file=file)
+
+    # if not End Site, write the other stuff!
+    if joint.type != "End":
+        # write CHANNELS section
+        writeNumTabs(file, depth+1)
+        if joint.numChannels == 6:
+            print("CHANNELS 6 ", file=file, end="")
+            print(sixChans, file=file)
+        elif joint.numChannels == 3:
+            print("CHANNELS 3 ", file=file, end="")
+            print(threeChans, file=file)
+
+        # write child joints
+        for j in joint.childJoints:
+            writeJoint(file, j, depth+1)
+
+    # write the closing bracket
+    writeNumTabs(file, depth)
+    print("}", file=file)
+
+
 def writeBvhFile(filepath, skel):
-    pass
+    # print("stringstring, file)
+    with open(filepath, "w") as file:
+        # print the HIERARCHY section
+        print("HIERARCHY", file=file)  # print the header
+        writeJoint(file, skel.jointsRoot, 0)  # recursively write out the joints
+
+        # print the MOTION section
+        print("MOTION", file=file)  # print the header
+        print("Frames: " + str(skel.numFrames), file=file)
+        print("Frame Time: " + str(skel.frameTime), file=file)
+        for i in range(0, skel.numFrames):
+            frame = getFrameStr(skel.jointsRoot, i)
+            print(frame, file=file)
