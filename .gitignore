@@ -33,8 +33,11 @@ ehthumbs.db
 Thumbs.db
 
 === PyCharm Settings files ===
-.idea
+.idea/
 .idea/*
 __pycache__
 __pycache__/*
 *.pyc
+
+== Ignore File in TestOuptut ==
+TestOutput/*
