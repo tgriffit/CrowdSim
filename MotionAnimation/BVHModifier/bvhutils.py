@@ -223,9 +223,9 @@ def getFrameStr(rootJoint, num):
     return currframes + " " + subframes
 
 
-def writeNumTabs(file, num):
+def writeNumTabs(ofile, num):
     for i in range(0, num):
-        print('\t', file=file, end='')
+        print('\t', file=ofile, end='')
 
 
 def writeJoint(file, joint, depth):

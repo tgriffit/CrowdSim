@@ -1,4 +1,4 @@
-__author__ = 'Quarknova'
+__author__ = "adneufel@ualberta.ca"
 
 
 def backposture(hips):
