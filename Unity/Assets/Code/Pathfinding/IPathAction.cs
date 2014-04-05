@@ -1,7 +1,9 @@
 using System;
 
-public class IPathAction<T>
+namespace Simulation
 {
-	public T Origin { get; set; }
+	public class IPathAction<T>
+	{
+		public T Origin { get; set; }
+	}
 }
-

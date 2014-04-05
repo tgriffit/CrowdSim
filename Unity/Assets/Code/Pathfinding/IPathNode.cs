@@ -6,16 +6,18 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
-public interface IPathNode<T>
+namespace Simulation
 {
-	List<T> Connections { get; }
-	Vector3 Position { get; }
-	bool Invalid { get; }
+	public interface IPathNode<T>
+	{
+		List<T> Connections { get; }
+		Vector3 Position { get; }
+		bool Invalid { get; }
 
-	float GetDistanceHeuristic(T other);
-	float GetDistance(T other, int time, float speed);
+		float GetDistanceHeuristic(T other);
+		float GetDistance(T other, int time, float speed);
 
-	// Find the list of actions required to pass from one node to another
-	List<IPathAction<T>> GetPathTo(T other, float speed, ref int time);
+		// Find the list of actions required to pass from one node to another
+		List<IPathAction<T>> GetPathTo(T other, float speed, ref int time);
+	}
 }

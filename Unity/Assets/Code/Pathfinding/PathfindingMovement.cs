@@ -9,7 +9,10 @@
 //------------------------------------------------------------------------------
 using System;
 
-public class PathfindingMovement : IPathAction<Tile>
+namespace Simulation
 {
-	public Tile Destination { get; set; }
+	public class PathfindingMovement : IPathAction<Tile>
+	{
+		public Tile Destination { get; set; }
+	}
 }

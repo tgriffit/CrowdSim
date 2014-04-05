@@ -3,12 +3,15 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-public static class Utilities
+namespace Simulation
 {
-	// Returns a random entry from the collection
-	public static T GetRandomEntry<T>(IEnumerable<T> collection)
+	public static class Utilities
 	{
-		int index = Random.Range(0, collection.Count());
-		return collection.ElementAt(index);
+		// Returns a random entry from the collection
+		public static T GetRandomEntry<T>(IEnumerable<T> collection)
+		{
+			int index = Random.Range(0, collection.Count());
+			return collection.ElementAt(index);
+		}
 	}
 }

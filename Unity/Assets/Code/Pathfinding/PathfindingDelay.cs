@@ -1,7 +1,9 @@
 using System;
 
-public class PathfindingDelay : IPathAction<Tile>
+namespace Simulation
 {
-	public int Delay { get; set; }
+	public class PathfindingDelay : IPathAction<Tile>
+	{
+		public int Delay { get; set; }
+	}
 }
-

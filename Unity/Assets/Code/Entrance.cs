@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Entrance : InteractionPoint
+namespace Simulation
 {
-	protected override string GetDisplayText() 
+	public class Entrance : InteractionPoint
 	{
-		return "Entrance"; 
+		protected override string GetDisplayText() 
+		{
+			return "Entrance"; 
+		}
 	}
 }

@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Exit : InteractionPoint
+namespace Simulation
 {
-	protected override string GetDisplayText() 
+	public class Exit : InteractionPoint
 	{
-		return "Exit"; 
+		protected override string GetDisplayText() 
+		{
+			return "Exit"; 
+		}
 	}
 }
