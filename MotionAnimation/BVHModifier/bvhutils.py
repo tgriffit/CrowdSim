@@ -24,7 +24,7 @@ class Skeleton:
         # Handle base case of End Site joint node
         if joint.chanNum == -1:
             return
-
+        
         self.jointsList.append(joint)
         for j in joint.childJoints:
             self.addJointToJointsList(j)
@@ -33,9 +33,16 @@ class Skeleton:
         # if tfirst call, call initJointsList
         if self.jointsList is None:
             self.initJointsList()
-
         return self.jointsList[num-1]
-
+    
+    def getJointByName(self, namestr):
+        if self.jointsList is None:
+            self.initJointsList()
+        
+        for joint in self.jointsList:
+            if joint.name == namestr:
+                return joint
+    
     def addMotionToJoints(self, motion):
         # add the frame info
         self.frameTime = motion.frameTime

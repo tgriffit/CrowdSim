@@ -1,31 +1,30 @@
 __author__ = "adneufel@ualberta.ca"
 
 from bvhutils import writeBvhFile, readInBvh, Skeleton, Joint, Motion, getFrameStr
-from modifiers import funcs
+from modifiers import funcs, unevenrandrange
+from copy import deepcopy
 import os
 
 outputdir = ""
 
 
-# Based upon the skel generate a number of altered bvh files
-def genSomeBvh(defaultSkel, skelfilename, num):
+# Based upon the skel moderate a number of altered bvh files
+def modSomeBvh(defaultSkel, skelfilename, num):
     for i in range(0, num):
         skelfilename = skelfilename.split(".")
         skelfilename[0] += str(i+1)
-        skel = genBvh(defaultSkel)
+        modskel = modBvh(defaultSkel)
         skelFilepath = os.path.join(outputdir, ".".join(skelfilename))
-        print(outputdir)
-        print(skelFilepath)
-        writeBvhFile(skelFilepath, skel)
+        writeBvhFile(skelFilepath, modskel)
 
 
-def genBvh(skel):
-    newSkel = Skeleton(skel.jointsRoot)
+def modBvh(skel):
+    newSkel = deepcopy(skel)
 
     # call each of the modifiers.funcs on our skeleton
     for func in funcs:
-        print("genBvh func call")
-        func(newSkel.jointsRoot)
+        print("modBvh func call")
+        func(newSkel)
 
     return newSkel
 
@@ -58,11 +57,14 @@ def main():
     bvhfile = os.path.split(bvhfilepath)[1]
     
     skel = readInBvh(bvhfilepath)
-
+    
+    for i in range(0, 100):
+        print(unevenrandrange(1, 100))
+    
     if skel is None:
         print("Error reading bvh file")
     else:
-        genSomeBvh(skel, bvhfile, numfile)
+        modSomeBvh(skel, bvhfile, numfile)
     print("Completed")
 
 
