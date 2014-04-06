@@ -19,7 +19,7 @@ namespace Simulation
 
 			Position = new Vector3(corner.x + TileSize / 2, corner.y, corner.z + TileSize / 2);
 
-			IsWalkable = TestWalkability(vertices, triangles);
+			//IsWalkable = TestWalkability(vertices, triangles);
 			claims = new List<TileClaim>();
 		}
 

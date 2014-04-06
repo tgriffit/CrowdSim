@@ -13,7 +13,7 @@ namespace Simulation
 		public static void Update()
 		{
 			CheckPopulationKeys();
-			CheckCameraKeys();
+			MoveCamera();
 		}
 
 		public static void OnGUI()
@@ -52,42 +52,28 @@ namespace Simulation
 		}
 
 		// Checks to see if the user is trying to move the camera
-		private static void CheckCameraKeys()
+		private static void MoveCamera()
 		{
-			float movementAmount = 0.25f;
-			Vector3 delta = new Vector3();
+			float movementSpeed = 0.25f;
+			float rotateSpeed = 2.0f;
 
-			if (Input.GetKeyDown(KeyCode.W))
-			{
-				delta.z += movementAmount;
-			}
-			
-			if (Input.GetKeyDown(KeyCode.S))
-			{
-				delta.z -= movementAmount;
-			}
+			Vector3 deltaPos = new Vector3();
 
-			if (Input.GetKeyDown(KeyCode.A))
-			{
-				delta.x -= movementAmount;
-			}
+			// Move the camera based on the buttons defined as controlling movement in Unity
+			deltaPos.x += Input.GetAxisRaw("Horizontal") * movementSpeed;
+			deltaPos.z += Input.GetAxisRaw("Vertical") * movementSpeed;
 
-			if (Input.GetKeyDown(KeyCode.D))
-			{
-				delta.x += movementAmount;
-			}
+			Camera.main.transform.Translate(deltaPos);
 
-			if (Input.GetKeyDown(KeyCode.E))
+			// If the right mouse button is held down we should rotate the camera
+			if (Input.GetMouseButton(1))
 			{
-				delta.y += movementAmount;
-			}
+				Vector3 deltaRot = new Vector3();
+				deltaRot.y =  Input.GetAxisRaw("Mouse X") * rotateSpeed;
+				deltaRot.x = -Input.GetAxisRaw("Mouse Y") * rotateSpeed;
 
-			if (Input.GetKeyDown(KeyCode.Q))
-			{
-				delta.y -= movementAmount;
+				Camera.main.transform.Rotate(deltaRot);
 			}
-
-			Camera.main.transform.Translate(delta);
 		}
 
 		private static void CreatePopulationGUI()
