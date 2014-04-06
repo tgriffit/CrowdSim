@@ -32,7 +32,12 @@ namespace Simulation
 
 			Vector3 corner = new Vector3(center.x - size.x / 2, height, center.z - size.z / 2);
 
-			Grid g = new Grid(corner, (int)(size.x / Tile.TileSize), (int)(size.z / Tile.TileSize), ref mesh);
+			var offset = gameObject.transform.position;
+			var scale = gameObject.transform.lossyScale;
+			Quaternion rotation = gameObject.transform.rotation;
+
+			Vector3[] scaledVertices = mesh.vertices.Select(v => offset + rotation * Vector3.Scale(v, scale)).ToArray();
+			Grid g = new Grid(corner, (int)(size.x / Tile.TileSize), (int)(size.z / Tile.TileSize), scaledVertices, mesh.triangles);
 
 			Simulation.Instance.Start();
 			Simulation.Instance.SetGrid(g);
@@ -46,7 +51,7 @@ namespace Simulation
 
 		void OnGUI()
 		{
-			InteractionHandler.OnGUI();
+			//InteractionHandler.OnGUI();
 		}
 
 		private float FindGroundLevel(Vector3[] normals)

@@ -1,6 +1,9 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
+
+#if UNITY_EDITOR
+	using UnityEditor;
+#endif
 
 namespace Simulation
 {
@@ -24,10 +27,13 @@ namespace Simulation
 		
 		}
 
+	
+#if UNITY_EDITOR
 		void OnDrawGizmos()
 		{
 			Handles.Label(transform.position, GetDisplayText());
 		}
+#endif
 
 		protected virtual string GetDisplayText() 
 		{

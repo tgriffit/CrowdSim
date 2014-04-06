@@ -13,12 +13,8 @@ namespace Simulation
 		private int maxX;
 		private int maxZ;
 
-		public Grid (Vector3 corner, int x, int z, ref Mesh mesh)
-		{	
-			foreach (Vector3 v in mesh.vertices)
-			{
-				Debug.Log(v.ToString());
-			}
+		public Grid (Vector3 corner, int x, int z, Vector3[] vertices, int[] triangles)
+		{
 			maxX = x;
 			maxZ = z;
 		
@@ -29,7 +25,7 @@ namespace Simulation
 
 				for (int j = 0; j < grid[i].Length; ++j)
 				{
-					grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TileSize, corner.y, corner.z + j * Tile.TileSize), i, j, ref mesh);
+					grid[i][j] = new Tile(new Vector3(corner.x + i * Tile.TileSize, corner.y, corner.z + j * Tile.TileSize), i, j, vertices, triangles);
 				}
 			}
 

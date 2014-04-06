@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
 
 namespace Simulation
 {
@@ -10,17 +9,17 @@ namespace Simulation
 	{
 		public const float TileSize = 0.75f;		// Should change to match the width of our model
 
-		private const float FlatTolerance = 0.05f;	// I have no idea what our tolerance for y-variation in terrain should be.
+		private const float FlatTolerance = 0.1f;	// I have no idea what our tolerance for y-variation in terrain should be.
 		private const float Clearance = 3.0f;		// The minimum clearance over the ground for a tile to be considered IsWalkable
 
-		public Tile (Vector3 corner, int x, int z, ref Mesh mesh)
+		public Tile(Vector3 corner, int x, int z, Vector3[] vertices, int[] triangles)
 		{
 			X = x;
 			Z = z;
 
 			Position = new Vector3(corner.x + TileSize / 2, corner.y, corner.z + TileSize / 2);
 
-			IsWalkable = TestWalkability(ref mesh);
+			IsWalkable = TestWalkability(vertices, triangles);
 			claims = new List<TileClaim>();
 		}
 
@@ -120,16 +119,16 @@ namespace Simulation
 			return null;
 		}
 
-		public bool TestWalkability(ref Mesh mesh)
+		public bool TestWalkability(Vector3[] vertices, int[] triangles)
 		{
 			// Throws a sphere at the terrain to detect obstacles. This should also detect any static objects 
 			// that get added to the scene, allowing users to spruce up the environment. This is a simple test,
 			// but will fail for anything without a collider, and won't detect the lack of a floor.
 			// I'm commenting this out for now for speed reasons.
-			//if (Physics.SphereCastAll(Position - new Vector3(0, TileSize, 0), TileSize / 2, Vector3.up).Any())
-			//{
-			//	return false;
-			//}
+			if (Physics.SphereCastAll(Position - new Vector3(0, TileSize, 0), TileSize / 2, Vector3.up).Any())
+			{
+				return false;
+			}
 
 			// Determine whether tile is in mesh. We may be dealing with concave meshes, which don't support mesh
 			// colliders properly.
@@ -142,26 +141,26 @@ namespace Simulation
 			Vector3 invalidBoxCenter = new Vector3(Position.x, Position.y + FlatTolerance + (Clearance - FlatTolerance) / 2, Position.z);
 			Vector3 invalidBoxSize = new Vector3(TileSize / 2, (Clearance - FlatTolerance) / 2, TileSize / 2);
 
+			Debug.Log(invalidBoxCenter.y + invalidBoxSize.y);
+
 			// Whether this tile contains actual ground
 			bool containedInMesh = false;
 
 			int index = 0;
-			while (index < mesh.triangles.Count())
+			while (index < triangles.Count())
 			{
-				Vector3[] vertices = { mesh.vertices[mesh.triangles[index]],
-										 mesh.vertices[mesh.triangles[index+1]], 
-										 mesh.vertices[mesh.triangles[index+2]] };
+				Vector3[] verts = { vertices[triangles[index]],
+										vertices[triangles[index+1]], 
+										vertices[triangles[index+2]] };
 
-				/*if (MeshUtilities.TestTriangleBoxOverlap(invalidBoxCenter, invalidBoxSize, vertices))
+				/*if (MeshUtilities.TestTriangleBoxOverlap(invalidBoxCenter, invalidBoxSize, verts))
 				{
-					Debug.Log("Bad touch");
+					// We've found a triangle that will get in the way, so treat it as an obstacle in the tile
 					return false;
 				}
-				else*/ if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, vertices))
+				else */if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, verts))
 				{
-					//Debug.Log("Good touch");
 					containedInMesh = true;
-					return true;
 				}
 
 				index += 3;

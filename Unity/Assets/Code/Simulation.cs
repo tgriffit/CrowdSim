@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +35,7 @@ namespace Simulation
 		{
 			Application.targetFrameRate = FPS;
 			agents = new List<Agent>();
-			maxpopulation = 2;
+			maxpopulation = 0;
 			Playing = true;
 		}
 
