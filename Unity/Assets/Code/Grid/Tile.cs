@@ -157,7 +157,7 @@ namespace Simulation
 					Debug.Log("Bad touch");
 					return false;
 				}
-				else*/ if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, vertices, print))
+				else*/ if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, vertices))
 				{
 					//Debug.Log("Good touch");
 					containedInMesh = true;

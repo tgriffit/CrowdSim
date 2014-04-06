@@ -20,9 +20,6 @@ namespace Simulation
 			Vector3 edge1 = vertices[2] - vertices[1];
 			Vector3 edge2 = vertices[0] - vertices[2];
 
-			// I wanted to use reflection to get the axis values, but apparently
-			// the x, y and z on a Vector3 are variables, not properties. This is
-			// faster, anyway.
 			int x = 0, y = 1, z = 2;
 
 			if (AxisTest(edge0, vertices[0], vertices[2], boxHalfSize, y, z)) return false;
@@ -75,8 +72,6 @@ namespace Simulation
 		private static float GetAxisValue(Vector3 v, string axisName)
 		{
 			var axis = typeof(Vector3).GetProperty(axisName);
-
-			// C# casting can be a strange beast
 			return Convert.ToSingle(axis.GetValue(v, null));
 		}
 
