@@ -135,6 +135,9 @@ namespace Simulation
 			// colliders properly.
 			Vector3 validBoxSize = new Vector3(TileSize / 2, FlatTolerance, TileSize / 2);
 
+			//string size = String.Format("{0} :: {1}", Position, validBoxSize);
+			//Debug.LogWarning(size);
+
 			// The position and dimensions of the box that represents the space that an obstacle has to occupy in order to be considered a problem for pathing
 			Vector3 invalidBoxCenter = new Vector3(Position.x, Position.y + FlatTolerance + (Clearance - FlatTolerance) / 2, Position.z);
 			Vector3 invalidBoxSize = new Vector3(TileSize / 2, (Clearance - FlatTolerance) / 2, TileSize / 2);
@@ -154,10 +157,11 @@ namespace Simulation
 					Debug.Log("Bad touch");
 					return false;
 				}
-				else*/ if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, vertices))
+				else*/ if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, vertices, print))
 				{
-					Debug.Log("Good touch");
+					//Debug.Log("Good touch");
 					containedInMesh = true;
+					return true;
 				}
 
 				index += 3;

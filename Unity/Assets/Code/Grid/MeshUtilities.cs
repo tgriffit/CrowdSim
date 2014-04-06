@@ -20,18 +20,22 @@ namespace Simulation
 			Vector3 edge1 = vertices[2] - vertices[1];
 			Vector3 edge2 = vertices[0] - vertices[2];
 
-																// x=0, y=1, z=2
-			if (AxisTest(edge0, vertices[0], vertices[2], boxHalfSize, 1, 2)) return false;
-			if (AxisTest(edge0, vertices[0], vertices[2], boxHalfSize, 2, 0)) return false;
-			if (AxisTest(edge0, vertices[1], vertices[2], boxHalfSize, 0, 1)) return false;
+			// I wanted to use reflection to get the axis values, but apparently
+			// the x, y and z on a Vector3 are variables, not properties. This is
+			// faster, anyway.
+			int x = 0, y = 1, z = 2;
 
-			if (AxisTest(edge1, vertices[0], vertices[2], boxHalfSize, 1, 2)) return false;
-			if (AxisTest(edge1, vertices[0], vertices[2], boxHalfSize, 2, 0)) return false;
-			if (AxisTest(edge1, vertices[0], vertices[1], boxHalfSize, 0, 1)) return false;
+			if (AxisTest(edge0, vertices[0], vertices[2], boxHalfSize, y, z)) return false;
+			if (AxisTest(edge0, vertices[0], vertices[2], boxHalfSize, z, x)) return false;
+			if (AxisTest(edge0, vertices[1], vertices[2], boxHalfSize, x, y)) return false;
 
-			if (AxisTest(edge2, vertices[0], vertices[1], boxHalfSize, 1, 2)) return false;
-			if (AxisTest(edge2, vertices[0], vertices[1], boxHalfSize, 2, 0)) return false;
-			if (AxisTest(edge2, vertices[1], vertices[2], boxHalfSize, 0, 1)) return false;
+			if (AxisTest(edge1, vertices[0], vertices[2], boxHalfSize, y, z)) return false;
+			if (AxisTest(edge1, vertices[0], vertices[2], boxHalfSize, z, x)) return false;
+			if (AxisTest(edge1, vertices[0], vertices[1], boxHalfSize, x, y)) return false;
+
+			if (AxisTest(edge2, vertices[0], vertices[1], boxHalfSize, y, z)) return false;
+			if (AxisTest(edge2, vertices[0], vertices[1], boxHalfSize, z, x)) return false;
+			if (AxisTest(edge2, vertices[1], vertices[2], boxHalfSize, x, y)) return false;
 
 			// Test overlap in x direction
 			float min = Math.Min(vertices[0].x, Math.Min(vertices[1].x, vertices[2].x));

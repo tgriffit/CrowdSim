@@ -15,6 +15,10 @@ namespace Simulation
 
 		public Grid (Vector3 corner, int x, int z, ref Mesh mesh)
 		{	
+			foreach (Vector3 v in mesh.vertices)
+			{
+				Debug.Log(v.ToString());
+			}
 			maxX = x;
 			maxZ = z;
 		
