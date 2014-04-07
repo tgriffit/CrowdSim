@@ -51,7 +51,7 @@ namespace Simulation
 
 		void OnGUI()
 		{
-			//InteractionHandler.OnGUI();
+			Simulation.Instance.OnGUI();
 		}
 
 		private float FindGroundLevel(Vector3[] normals)

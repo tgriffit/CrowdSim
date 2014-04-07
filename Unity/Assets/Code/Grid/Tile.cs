@@ -141,8 +141,6 @@ namespace Simulation
 			Vector3 invalidBoxCenter = new Vector3(Position.x, Position.y + FlatTolerance + (Clearance - FlatTolerance) / 2, Position.z);
 			Vector3 invalidBoxSize = new Vector3(TileSize / 2, (Clearance - FlatTolerance) / 2, TileSize / 2);
 
-			Debug.Log(invalidBoxCenter.y + invalidBoxSize.y);
-
 			// Whether this tile contains actual ground
 			bool containedInMesh = false;
 
@@ -160,6 +158,7 @@ namespace Simulation
 				}
 				else */if (!containedInMesh && MeshUtilities.TestTriangleBoxOverlap(Position, validBoxSize, verts))
 				{
+					// The tile's valid walking zone overlaps a triangle in the mesh
 					containedInMesh = true;
 				}
 
