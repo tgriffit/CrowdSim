@@ -44,8 +44,14 @@ namespace Simulation
 		{
 			float dist = Vector3.Distance(Position, other.Position);
 			int framesOfMovement = (int)(dist / speed);
+			int delay = other.FindDelay(framenum + framesOfMovement / 2, framesOfMovement);
 
-			return framesOfMovement + other.FindDelay(framenum + framesOfMovement/2, framesOfMovement);
+			if (ClaimedBetweenTimes(framenum, framenum + delay))
+			{
+				return float.MaxValue;
+			}
+
+			return framesOfMovement + delay;
 		}
 
 		public List<IPathAction<Tile>> GetPathTo(Tile other, float speed, ref int time)
@@ -58,6 +64,10 @@ namespace Simulation
 
 			if (delay > 0)
 			{
+				// TODO: this is a hack to remove visibly long, pointless delays.
+				// Find an actual fix for this.
+				if (delay > 200) return null;
+
 				list.Add(new PathfindingDelay() { Origin = this, Delay = delay });
 			}
 
@@ -104,6 +114,13 @@ namespace Simulation
 		public bool MultipleClaims()
 		{
 			return (claims.Count(c => c.StartTime <= 0) > 1);
+		}
+
+		public bool ClaimedBetweenTimes(int start, int end)
+		{
+			return claims.Any(c => ((c.StartTime <= start && c.EndTime >= start)
+				|| (c.StartTime <= start + end && c.EndTime >= start + end)
+				|| (c.StartTime >= start && c.EndTime <= start)));
 		}
 
 		// The action to take when an agent reaches it's goal.

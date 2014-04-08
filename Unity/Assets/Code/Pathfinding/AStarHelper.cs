@@ -122,9 +122,17 @@ namespace Simulation
 				ReconstructPath(cameFrom, cameFrom[currentNode], currentNode, speed, ref result, ref time);
 			}
 
-			if (previousNode != null) 
+			if (previousNode != null && result != null) 
 			{
-				result.AddRange(currentNode.GetPathTo(previousNode, speed, ref time));
+				var path = currentNode.GetPathTo(previousNode, speed, ref time);
+
+				if (path == null)
+				{
+					result = null;
+					return;
+				}
+
+				result.AddRange(path);
 			}
 		}
 	}

@@ -9,6 +9,7 @@ namespace Simulation
 	{
 		private float speed;								// Ideal walking speed in m/s
 		private float speedPerFrame;						// How far each agent should move per frame
+		private float speedMultiplier;						// How fast the agent is compared to the "ideal" speed
 
 		// The prefab we should spawn
 		private GameObject model;
@@ -26,7 +27,8 @@ namespace Simulation
 		public Agent (GameObject m)
 		{
 			// An agent's speed is within 5% of 1.33 m/s
-			speed = 1.33f * UnityEngine.Random.Range(0.95f, 1.05f);
+			speedMultiplier = UnityEngine.Random.Range(0.95f, 1.05f);
+			speed = 1.33f * speedMultiplier;
 			speedPerFrame = speed / Simulation.FPS;
 
 			this.model = m;
@@ -45,8 +47,8 @@ namespace Simulation
 
 			if (path == null)
 			{
-				Debug.LogError(String.Format("Failed to find path from [{0},{1}] to [{2},{3}]!", location.X, location.Z, Goal.X, Goal.Z));
-				Debug.DrawLine(location.Position, Goal.Position, Color.red, 5);
+				//Debug.LogError(String.Format("Failed to find path from [{0},{1}] to [{2},{3}]!", location.X, location.Z, Goal.X, Goal.Z));
+				//Debug.DrawLine(location.Position, Goal.Position, Color.red, 5);
 				return false;
 			}
 
