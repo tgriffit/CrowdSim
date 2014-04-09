@@ -5,14 +5,20 @@ using System;
 
 namespace Simulation
 {
+	enum MovementState {Idle, Walking}
+
 	public class Agent
 	{
 		private float speed;								// Ideal walking speed in m/s
 		private float speedPerFrame;						// How far each agent should move per frame
 		private float speedMultiplier;						// How fast the agent is compared to the "ideal" speed
 
-		// The prefab we should spawn
+		// The prefab we should spawn, and its animator controller
 		private GameObject model;
+		Animator anim;
+
+		// The previous movement state, for animation purposes
+		private MovementState prevMoveState;
 
 		// our spawned instance
 		private GameObject agent;
@@ -32,6 +38,12 @@ namespace Simulation
 			speedPerFrame = speed / Simulation.FPS;
 
 			this.model = m;
+
+			// Set up the animator in an awkward hackish way
+			this.anim = model.GetComponent<Animator>();
+			
+			// Set the default movement state to Idle so that the animation controller works properly
+			this.prevMoveState = MovementState.Idle;
 
 			// Creates a unique colour to display the path for each agent
 			if (Simulation.Debug)
@@ -67,6 +79,9 @@ namespace Simulation
 		{
 			DrawPath();
 
+			// Ensure that the correct Animator function is being used
+			anim = model.GetComponent<Animator> ();
+
 			if (path.Any())
 			{
 				Move();
@@ -81,6 +96,13 @@ namespace Simulation
 			if (target != null)
 			{
 				Tile destination = target.Destination;
+
+				// If the previous movement state was Idle begin the StartWalking animation
+				if (prevMoveState == MovementState.Idle)
+				{
+					anim.SetTrigger("StartWalking");
+					prevMoveState = MovementState.Walking;
+				}
 
 				// Moves the agent towards the next tile in it's magical journey.
 				agent.transform.position = Vector3.MoveTowards(agent.transform.position, target.Destination.Position, speedPerFrame);
@@ -114,6 +136,13 @@ namespace Simulation
 			}
 			else if (delay != null)
 			{
+				// if the previous movement state was Walking then begin the StopWalking animation
+				if (this.prevMoveState == MovementState.Walking) 
+				{
+					anim.SetTrigger("StopWalking");
+					prevMoveState = MovementState.Walking;
+				}
+
 				if (--delay.Delay <= 0)
 				{
 					path.RemoveAt(0);

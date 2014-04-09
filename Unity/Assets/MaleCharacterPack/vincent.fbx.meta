@@ -84,7 +84,47 @@ ModelImporter:
     400076: RightInHandThumb
     400078: RightFootToeBase_End
     4300000: vincent_Casual_Male_Lod_1
+    9500000: //RootNode
     11100000: //RootNode
+    11100002: Head
+    11100004: HeadTop_End
+    11100006: Hips
+    11100008: LeftArm
+    11100010: LeftFoot
+    11100012: LeftFootToeBase_End
+    11100014: LeftForeArm
+    11100016: LeftHand
+    11100018: LeftHandIndex1
+    11100020: LeftHandIndex2
+    11100022: LeftHandIndex3_End
+    11100024: LeftHandThumb1
+    11100026: LeftHandThumb2_End
+    11100028: LeftInHandThumb
+    11100030: LeftLeg
+    11100032: LeftShoulder
+    11100034: LeftToeBase
+    11100036: LeftUpLeg
+    11100038: Neck
+    11100040: Neck1
+    11100042: RightArm
+    11100044: RightFoot
+    11100046: RightFootToeBase_End
+    11100048: RightForeArm
+    11100050: RightHand
+    11100052: RightHandIndex1
+    11100054: RightHandIndex2
+    11100056: RightHandIndex3_End
+    11100058: RightHandThumb1
+    11100060: RightHandThumb2_End
+    11100062: RightInHandThumb
+    11100064: RightLeg
+    11100066: RightShoulder
+    11100068: RightToeBase
+    11100070: RightUpLeg
+    11100072: Spine
+    11100074: Spine1
+    11100076: Spine2
+    11100078: vincent_Casual_Male_Lod_1
     13700000: Hips
     13700002: vincent_Casual_Male_Lod_1
   materials:
