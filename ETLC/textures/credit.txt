@@ -1,0 +1,3 @@
+Some textures taken or modified from http://cgtextures.com/
+
+Others created from scratch for this project.
