@@ -10,6 +10,9 @@ namespace Simulation
 
 		private static int currentPos;
 
+		private static float cameraX = -90.0f;
+		private static float cameraY =   0.0f;
+
 		public static void Update()
 		{
 			CheckPopulationKeys();
@@ -69,11 +72,12 @@ namespace Simulation
 			if (Input.GetMouseButton(1))
 			{
 				Vector3 deltaRot = new Vector3();
-				deltaRot.y =  Input.GetAxisRaw("Mouse X") * rotateSpeed;
-				deltaRot.x = -Input.GetAxisRaw("Mouse Y") * rotateSpeed;
-
-				Camera.main.transform.Rotate(deltaRot);
+				cameraY +=  Input.GetAxisRaw("Mouse X") * rotateSpeed;
+				cameraX += -Input.GetAxisRaw("Mouse Y") * rotateSpeed;
 			}
+
+			// This gimbal locks the camera, but that's the desired behaviour
+			Camera.main.transform.rotation = Quaternion.Euler(cameraX, cameraY, 0);
 		}
 
 		private static void CreatePopulationGUI()
