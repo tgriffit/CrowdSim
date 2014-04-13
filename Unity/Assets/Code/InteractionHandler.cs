@@ -10,8 +10,8 @@ namespace Simulation
 
 		private static int currentPos;
 
-		private static float cameraX = -90.0f;
-		private static float cameraY =   0.0f;
+		private static float cameraX =   0.0f;
+		private static float cameraY = -90.0f;
 
 		public static void Update()
 		{
