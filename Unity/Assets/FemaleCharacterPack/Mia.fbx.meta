@@ -198,7 +198,7 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     optimizeGameObjects: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
@@ -227,19 +227,20 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 1
   importAnimation: 1
-  copyAvatar: 0
+  copyAvatar: 1
   humanDescription:
     human: []
     skeleton: []
     armTwist: .5
     foreArmTwist: .5
     upperLegTwist: .5
-    legTwist: .5
+    legTwist: .508000016
     armStretch: .0500000007
-    legStretch: .0500000007
-    feetSpacing: 0
+    legStretch: .0540000014
+    feetSpacing: .101000004
     rootMotionBoneName: 
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 7e350c04d38a39141a838b86c878c307,
+    type: 3}
+  animationType: 3
   additionalBone: 0
   userData: 
