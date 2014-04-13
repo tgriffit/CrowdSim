@@ -101,11 +101,11 @@ namespace Simulation
 				if (prevMoveState == MovementState.Idle)
 				{
 					anim.SetTrigger("StartWalking");
-					prevMoveState = MovementState.Walking;
 				}
 
 				// Moves the agent towards the next tile in it's magical journey.
 				agent.transform.position = Vector3.MoveTowards(agent.transform.position, target.Destination.Position, speedPerFrame);
+				prevMoveState = MovementState.Walking;
 
 				if (Vector3.Distance(destination.Position, agent.transform.position) < Simulation.Tolerance)
 				{
@@ -140,12 +140,12 @@ namespace Simulation
 				if (this.prevMoveState == MovementState.Walking) 
 				{
 					anim.SetTrigger("StopWalking");
-					prevMoveState = MovementState.Walking;
 				}
 
 				if (--delay.Delay <= 0)
 				{
 					path.RemoveAt(0);
+					prevMoveState = MovementState.Walking;
 				}
 			}
 		}
