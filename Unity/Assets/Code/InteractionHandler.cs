@@ -71,7 +71,6 @@ namespace Simulation
 			// If the right mouse button is held down we should rotate the camera
 			if (Input.GetMouseButton(1))
 			{
-				Vector3 deltaRot = new Vector3();
 				cameraY +=  Input.GetAxisRaw("Mouse X") * rotateSpeed;
 				cameraX += -Input.GetAxisRaw("Mouse Y") * rotateSpeed;
 			}
