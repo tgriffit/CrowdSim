@@ -95,15 +95,10 @@ namespace Simulation
 			{
 				Tile destination = target.Destination;
 
-				// If the previous movement state was Idle begin the StartWalking animation
-				if (prevMoveState == MovementState.Idle)
-				{
-					anim.SetTrigger("StartWalking");
-				}
+					//anim.SetTrigger("StartWalking");
 
 				// Moves the agent towards the next tile in it's magical journey.
 				agent.transform.position = Vector3.MoveTowards(agent.transform.position, target.Destination.Position, speedPerFrame);
-				prevMoveState = MovementState.Walking;
 
 				if (Vector3.Distance(destination.Position, agent.transform.position) < Simulation.Tolerance)
 				{
@@ -134,16 +129,9 @@ namespace Simulation
 			}
 			else if (delay != null)
 			{
-				// if the previous movement state was Walking then begin the StopWalking animation
-				if (this.prevMoveState == MovementState.Walking) 
-				{
-					anim.SetTrigger("StopWalking");
-				}
-
 				if (--delay.Delay <= 0)
 				{
 					path.RemoveAt(0);
-					prevMoveState = MovementState.Walking;
 				}
 			}
 		}
