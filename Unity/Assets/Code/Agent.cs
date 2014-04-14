@@ -13,7 +13,7 @@ namespace Simulation
 
 		// The prefab we should spawn, and its animator controller
 		private GameObject model;
-		Animator anim;
+		public Animator anim;
 
 		// our spawned instance
 		private GameObject agent;
@@ -34,9 +34,9 @@ namespace Simulation
 
 			this.model = m;
 
-			// Set up the animator in an awkward hackish way
-			this.anim = model.GetComponent<Animator>();
-			
+			// Set up the animator
+			this.anim = m.GetComponent<Animator>();
+
 			// Creates a unique colour to display the path for each agent
 			if (Simulation.Debug)
 			{
@@ -77,9 +77,6 @@ namespace Simulation
 		{
 			DrawPath();
 
-			// Ensure that the correct Animator function is being used
-			anim = model.GetComponent<Animator> ();
-
 			if (path.Any())
 			{
 				Move();
@@ -94,8 +91,6 @@ namespace Simulation
 			if (target != null)
 			{
 				Tile destination = target.Destination;
-
-					//anim.SetTrigger("StartWalking");
 
 				// Moves the agent towards the next tile in it's magical journey.
 				agent.transform.position = Vector3.MoveTowards(agent.transform.position, target.Destination.Position, speedPerFrame);
@@ -129,9 +124,23 @@ namespace Simulation
 			}
 			else if (delay != null)
 			{
-				if (--delay.Delay <= 0)
+				//Debug.Log ("Delay is occuring!: " + delay.Delay + " speed: " + model.GetComponent<Animator>().GetInteger("Speed".GetHashCode()));
+				delay.Delay -= 1;
+
+				// if waiting on a tile, play the idle animation
+				if (delay.Delay > 5)
+				{
+					//anim.SetTrigger("StopWalking");
+					Debug.Log ("To idle state");
+					anim.Play ("Idle");
+				}
+				else if (delay.Delay <= 0)
 				{
 					path.RemoveAt(0);
+					// now that the delay is over, start walking animations
+					//anim.SetTrigger("StartWalking");
+					Debug.Log ("To walking state");
+					anim.Play ("Walking");
 				}
 			}
 		}
