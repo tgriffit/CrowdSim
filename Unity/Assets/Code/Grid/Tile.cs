@@ -32,21 +32,22 @@ namespace Simulation
 		public bool Invalid { get { return !IsWalkable; } }
 		public List<Tile> Connections { get; set; }
 
-		public float GetDistanceHeuristic(Tile other)
+		public float GetDistanceHeuristic(Tile other, float speed)
 		{
 			// Finds the number of orthogonal tile movements that would
 			// be required to pass between the two tiles without taking
 			// obstacles into account.
-			return Math.Abs(other.X - X) + Math.Abs(other.Z - Z);
+			//return (Math.Abs(other.X - X) + Math.Abs(other.Z - Z)) / speed;
+			return Vector3.Distance(Position, other.Position) / speed;
 		}
 
 		public float GetDistance(Tile other, int framenum, float speed)
 		{
 			float dist = Vector3.Distance(Position, other.Position);
 			int framesOfMovement = (int)(dist / speed);
-			int delay = other.FindDelay(framenum + framesOfMovement / 2, framesOfMovement);
+			int delay = other.FindDelay(framenum + framesOfMovement / 2, framesOfMovement, this);
 
-			if (ClaimedBetweenTimes(framenum, framenum + delay))
+			if (ClaimedBetweenTimes(framenum, framenum + delay) || delay == int.MaxValue)
 			{
 				return float.MaxValue;
 			}
@@ -60,7 +61,7 @@ namespace Simulation
 
 			float dist = Vector3.Distance(Position, other.Position);
 			int framesOfMovement = (int)(dist / speed);
-			int delay = other.FindDelay(time + framesOfMovement / 2, framesOfMovement);
+			int delay = other.FindDelay(time + framesOfMovement / 2, framesOfMovement, this);
 
 			if (delay > 0)
 			{
@@ -95,9 +96,16 @@ namespace Simulation
 		// We keep track of when each one will be in the tile so that others can
 		// move through it up until that point.
 		private List<TileClaim> claims;
-		public void AddClaim(int start, int duration)
+		public void AddClaim(int start, int duration, Agent agent, Tile nextDestination)
 		{
-			claims.Add(new TileClaim(){ StartTime = start, EndTime = start+duration });
+			claims.Add(new TileClaim()
+				{ 
+					StartTime = start, 
+					EndTime = start+duration,
+					Agent = agent,
+					NextDestination = nextDestination
+				});
+
 			claims.OrderBy(c => c.StartTime);
 		}
 
@@ -187,7 +195,7 @@ namespace Simulation
 
 		// Finds how long an agent will have to delay if it wants to enter this tile at a time starting at
 		// time and entering the tile will take duration time.
-		private int FindDelay(int time, int duration)
+		private int FindDelay(int time, int duration, Tile origin)
 		{
 			// The number of frames the agent will have to wait before it
 			// can enter the tile.
@@ -200,6 +208,14 @@ namespace Simulation
 				    || (claim.StartTime <= time + duration + delay && claim.EndTime >= time + duration + delay)
 				    || (claim.StartTime >= time + delay && claim.EndTime <= time + duration + delay))
 				{
+					// If we're trying to move into a tile and an agent in that tile is moving into this tile, 
+					// then the agent in this tile will have to go around. Otherwise they would walk through
+					// each other
+					if (claim.NextDestination == origin)
+					{
+						return int.MaxValue;
+					}
+
 					delay += claim.EndTime - time;
 				}
 			}

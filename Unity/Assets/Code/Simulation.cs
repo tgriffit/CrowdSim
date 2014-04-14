@@ -34,6 +34,8 @@ namespace Simulation
 		public void Start()
 		{
 			Application.targetFrameRate = FPS;
+			InteractionHandler.InitializeCamera();
+
 			agents = new List<Agent>();
 			maxpopulation = 0;
 			Playing = true;
@@ -44,20 +46,20 @@ namespace Simulation
 		{
 			InteractionHandler.Update();
 			grid.DebugDraw();
-			
+
 			if (Playing)
 			{
 				grid.Update();
 
-				agents.ForEach (a => a.Update ());
+				agents.ForEach(a => a.Update());
 
 				if (agents.Count < maxpopulation)
 				{
 					AddAgent();
-				} 
+				}
 				else if (agents.Count > maxpopulation)
 				{
-					Agent a = agents.FirstOrDefault ();
+					Agent a = agents.FirstOrDefault();
 
 					if (a != null)
 					{
@@ -113,7 +115,7 @@ namespace Simulation
 		// We also 
 		private Tile FindGoal(Tile entrance)
 		{
-			var exits = grid.GetExitTiles();
+			var exits = grid.GetExitTiles().Where(t => t != entrance);
 			return Utilities.GetRandomEntry(exits);
 		}
 	}

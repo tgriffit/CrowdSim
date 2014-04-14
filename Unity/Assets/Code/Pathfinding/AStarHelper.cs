@@ -32,9 +32,9 @@ namespace Simulation
 		
 		// Base cost Estimate - this would need to be evoled for your project based on true cost
 		// to move between nodes
-		static float HeuristicCostEstimate<T>(T start, T goal) where T: IPathNode<T>
+		static float HeuristicCostEstimate<T>(T start, T goal, float speed) where T: IPathNode<T>
 		{
-			return start.GetDistanceHeuristic(goal);
+			return start.GetDistanceHeuristic(goal, speed);
 		}
 		
 		// Find the current lowest score path
@@ -58,7 +58,7 @@ namespace Simulation
 		// Calculate the A* path
 		public static List<IPathAction<T>> Calculate<T>(T start, T goal, float speed) where T : IPathNode<T>
 		{
-			List<T> closedset = new List<T>();    // The set of nodes already evaluated.
+			List<T> closedset = new List<T>();  // The set of nodes already evaluated.
 			List<T> openset = new List<T>();    // The set of tentative nodes to be evaluated.
 			openset.Add(start);
 			Dictionary<T, T> cameFrom = new Dictionary<T, T>();    // The map of navigated nodes.
@@ -67,7 +67,7 @@ namespace Simulation
 			gScore[start] = 0.0f; // Cost from start along best known path.
 			
 			Dictionary<T, float> hScore = new Dictionary<T, float>();
-			hScore[start] = HeuristicCostEstimate(start, goal); 
+			hScore[start] = HeuristicCostEstimate(start, goal, speed); 
 			
 			Dictionary<T, float> fScore = new Dictionary<T, float>();
 			fScore[start] = hScore[start]; // Estimated total cost from start to goal through y.
@@ -105,7 +105,7 @@ namespace Simulation
 					{
 						cameFrom[y] = x;
 						gScore[y] = tentativeGScore;
-						hScore[y] = HeuristicCostEstimate(y, goal);
+						hScore[y] = HeuristicCostEstimate(y, goal, speed);
 						fScore[y] = gScore[y] + hScore[y];
 					}
 				}

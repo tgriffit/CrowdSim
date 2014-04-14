@@ -5,7 +5,7 @@ using System;
 
 namespace Simulation
 {
-	enum MovementState {Idle, Walking}
+	enum MovementState { Idle, Walking }
 
 	public class Agent
 	{
@@ -57,7 +57,9 @@ namespace Simulation
 		{
 			path = AStarHelper.Calculate(location, Goal, speedPerFrame);
 
-			if (path == null)
+			if (path == null 
+				// TODO: Fix the issue with pathfinding that makes this necessary (without removing the occasional non-optimal paths if possible)
+				|| path.OfType<PathfindingMovement>().Sum(pm => Vector3.Distance(pm.Origin.Position, pm.Destination.Position)) > 4*Vector3.Distance(location.Position, Goal.Position))
 			{
 				//Debug.LogError(String.Format("Failed to find path from [{0},{1}] to [{2},{3}]!", location.X, location.Z, Goal.X, Goal.Z));
 				//Debug.DrawLine(location.Position, Goal.Position, Color.red, 5);
@@ -66,6 +68,7 @@ namespace Simulation
 
 			agent = (GameObject)GameObject.Instantiate(model, location.Position, Quaternion.LookRotation(Goal.Position));
 			ClaimPath();
+
 			return true;
 		}
 
@@ -73,6 +76,8 @@ namespace Simulation
 		{
 			Simulation.Instance.RemoveAgent(this);
 			GameObject.Destroy(agent);
+
+			// We could also walk through the agent's path and remove future tile claims if we wanted
 		}
 
 		public void Update()
@@ -114,7 +119,7 @@ namespace Simulation
 					if (path.Any())
 					{
 						// Rotate towards our new target
-						var nextTarget = path.FirstOrDefault() as PathfindingMovement;
+						var nextTarget = path.OfType<PathfindingMovement>().FirstOrDefault();
 
 						if (nextTarget != null)
 						{
@@ -162,7 +167,7 @@ namespace Simulation
 				if (current is PathfindingDelay)
 				{
 					PathfindingDelay delay = current as PathfindingDelay;
-					delay.Origin.AddClaim(time, delay.Delay);
+					delay.Origin.AddClaim(time, delay.Delay, this, null);
 					time += delay.Delay;
 				}
 				else
@@ -174,8 +179,8 @@ namespace Simulation
 					int halfframes = numframes / 2;
 				
 					// Half of the trip will be in each tile
-					move.Origin.AddClaim(time, halfframes);
-					move.Destination.AddClaim(time + halfframes, halfframes);
+					move.Origin.AddClaim(time, halfframes, this, move.Destination);
+					move.Destination.AddClaim(time + halfframes, halfframes, this, null);
 
 					time += numframes;
 				}
