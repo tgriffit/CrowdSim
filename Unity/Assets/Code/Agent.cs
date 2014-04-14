@@ -5,8 +5,6 @@ using System;
 
 namespace Simulation
 {
-	enum MovementState { Idle, Walking }
-
 	public class Agent
 	{
 		private float speed;								// Ideal walking speed in m/s
@@ -16,9 +14,6 @@ namespace Simulation
 		// The prefab we should spawn, and its animator controller
 		private GameObject model;
 		Animator anim;
-
-		// The previous movement state, for animation purposes
-		private MovementState prevMoveState;
 
 		// our spawned instance
 		private GameObject agent;
@@ -42,9 +37,6 @@ namespace Simulation
 			// Set up the animator in an awkward hackish way
 			this.anim = model.GetComponent<Animator>();
 			
-			// Set the default movement state to Idle so that the animation controller works properly
-			this.prevMoveState = MovementState.Idle;
-
 			// Creates a unique colour to display the path for each agent
 			if (Simulation.Debug)
 			{
@@ -59,7 +51,8 @@ namespace Simulation
 
 			if (path == null 
 				// TODO: Fix the issue with pathfinding that makes this necessary (without removing the occasional non-optimal paths if possible)
-				|| path.OfType<PathfindingMovement>().Sum(pm => Vector3.Distance(pm.Origin.Position, pm.Destination.Position)) > 4*Vector3.Distance(location.Position, Goal.Position))
+				|| path.OfType<PathfindingMovement>().Sum(pm => Vector3.Distance(pm.Origin.Position, pm.Destination.Position)) > 4*Vector3.Distance(location.Position, Goal.Position)
+				|| path.OfType<PathfindingDelay>().Any(pd => pd.Delay > 50))
 			{
 				//Debug.LogError(String.Format("Failed to find path from [{0},{1}] to [{2},{3}]!", location.X, location.Z, Goal.X, Goal.Z));
 				//Debug.DrawLine(location.Position, Goal.Position, Color.red, 5);
@@ -102,15 +95,10 @@ namespace Simulation
 			{
 				Tile destination = target.Destination;
 
-				// If the previous movement state was Idle begin the StartWalking animation
-				if (prevMoveState == MovementState.Idle)
-				{
-					anim.SetTrigger("StartWalking");
-				}
+					//anim.SetTrigger("StartWalking");
 
 				// Moves the agent towards the next tile in it's magical journey.
 				agent.transform.position = Vector3.MoveTowards(agent.transform.position, target.Destination.Position, speedPerFrame);
-				prevMoveState = MovementState.Walking;
 
 				if (Vector3.Distance(destination.Position, agent.transform.position) < Simulation.Tolerance)
 				{
@@ -141,16 +129,9 @@ namespace Simulation
 			}
 			else if (delay != null)
 			{
-				// if the previous movement state was Walking then begin the StopWalking animation
-				if (this.prevMoveState == MovementState.Walking) 
-				{
-					anim.SetTrigger("StopWalking");
-				}
-
 				if (--delay.Delay <= 0)
 				{
 					path.RemoveAt(0);
-					prevMoveState = MovementState.Walking;
 				}
 			}
 		}
