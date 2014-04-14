@@ -16,7 +16,7 @@ Play/Pause: Press space bar to pause or resume the simulation
 
 
 
-Creating a new environment
+Setting up a new environment
 ==========================
 
 If you wish to make a new scene, follow these steps:
@@ -31,9 +31,9 @@ If you wish to make a new scene, follow these steps:
   
   
   
-  Code
-  ====
+Code
+====
   
-  Source code resides in Unity/Assets/Code
-  
-  The first piece of code called is SetupEnvironment.cs. This initializes the tile grid and Simulation.cs, which runs the simulation.
+Source code resides in Unity/Assets/Code
+
+The first piece of code called is SetupEnvironment.cs. This initializes the tile grid and Simulation.cs, which runs the simulation.
