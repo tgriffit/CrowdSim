@@ -3,11 +3,21 @@ CrowdSim
 
 This folder contains a unity project that implements a crowd simulation in arbitrary environments. 
 
-ETLC-Sim.exe is a prebuilt set binaries containing a sample of our simulation in the entryway of ETLC.
+ETLC-Sim.exe is a prebuilt set binaries containing a sample of our simulation in the entryway of ETLC. You can view the scene used to create the binaries if you launch Unity/Assets/ETLC.unity in the Unity editor. It has only been tested with version 4.3.4f1.
 
 
-You can view the scene used to create the binaries if you launch Unity/Assets/ETLC.unity in the Unity editor. It has only been tested with version 4.3.4f1.
 
+Simulation Controls
+===================
+Movement:   Use wasd keys to move the camera forward, left, back and right respectively
+Camera:     Hold down the right mouse button and drag the mouse to turn the camera
+Population: Add agents to the scene with the on screen GUI or with the + and * keys. Reduce the population with - and /
+Play/Pause: Press space bar to pause or resume the simulation
+
+
+
+Creating a new environment
+==========================
 
 If you wish to make a new scene, follow these steps:
   -In Unity, File->New Scene
@@ -18,7 +28,6 @@ If you wish to make a new scene, follow these steps:
   -Place at least one Entrance prefab in the scene
   -Place at least one Exit prefab in the scene
   -Hit play
-  -Add agents to the scene with the on screen GUI or with the + and * keys. Reduce the population with - and /.
   
   
   
