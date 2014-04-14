@@ -5,8 +5,6 @@ using System;
 
 namespace Simulation
 {
-	enum MovementState {Idle, Walking}
-
 	public class Agent
 	{
 		private float speed;								// Ideal walking speed in m/s
@@ -16,9 +14,6 @@ namespace Simulation
 		// The prefab we should spawn, and its animator controller
 		private GameObject model;
 		Animator anim;
-
-		// The previous movement state, for animation purposes
-		private MovementState prevMoveState;
 
 		// our spawned instance
 		private GameObject agent;
@@ -42,9 +37,6 @@ namespace Simulation
 			// Set up the animator in an awkward hackish way
 			this.anim = model.GetComponent<Animator>();
 			
-			// Set the default movement state to Idle so that the animation controller works properly
-			this.prevMoveState = MovementState.Idle;
-
 			// Creates a unique colour to display the path for each agent
 			if (Simulation.Debug)
 			{
