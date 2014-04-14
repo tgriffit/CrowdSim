@@ -10,8 +10,12 @@ namespace Simulation
 
 		private static int currentPos;
 
-		private static float cameraX = -90.0f;
-		private static float cameraY =   0.0f;
+		private static Vector3 cameraAngles = new Vector3();
+
+		public static void InitializeCamera()
+		{
+			cameraAngles = Camera.main.transform.rotation.eulerAngles;
+		}
 
 		public static void Update()
 		{
@@ -71,12 +75,12 @@ namespace Simulation
 			// If the right mouse button is held down we should rotate the camera
 			if (Input.GetMouseButton(1))
 			{
-				cameraY +=  Input.GetAxisRaw("Mouse X") * rotateSpeed;
-				cameraX += -Input.GetAxisRaw("Mouse Y") * rotateSpeed;
+				cameraAngles.y +=  Input.GetAxisRaw("Mouse X") * rotateSpeed;
+				cameraAngles.x += -Input.GetAxisRaw("Mouse Y") * rotateSpeed;
 			}
 
 			// This gimbal locks the camera, but that's the desired behaviour
-			Camera.main.transform.rotation = Quaternion.Euler(cameraX, cameraY, 0);
+			Camera.main.transform.rotation = Quaternion.Euler(cameraAngles);
 		}
 
 		private static void CreatePopulationGUI()

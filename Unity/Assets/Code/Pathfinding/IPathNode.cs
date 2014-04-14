@@ -14,7 +14,7 @@ namespace Simulation
 		Vector3 Position { get; }
 		bool Invalid { get; }
 
-		float GetDistanceHeuristic(T other);
+		float GetDistanceHeuristic(T other, float speed);
 		float GetDistance(T other, int time, float speed);
 
 		// Find the list of actions required to pass from one node to another
