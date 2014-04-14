@@ -132,7 +132,6 @@ namespace Simulation
 				{
 					//anim.SetTrigger("StopWalking");
 					Debug.Log ("To idle state");
-					anim.Play ("Idle");
 				}
 				else if (delay.Delay <= 0)
 				{
@@ -140,7 +139,6 @@ namespace Simulation
 					// now that the delay is over, start walking animations
 					//anim.SetTrigger("StartWalking");
 					Debug.Log ("To walking state");
-					anim.Play ("Walking");
 				}
 			}
 		}
